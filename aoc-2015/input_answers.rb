@@ -15,16 +15,23 @@ def day2(path)
   puts "Part 2: #{AOC2015.day2_part2(dimensions)}"
 end
 
-def day3
+def day3(path)
   directions = File.read(path || "day3_input.txt").strip
   puts "Part 1: #{AOC2015.day3_part1(directions)}"
   puts "Part 2: #{AOC2015.day3_part2(directions)}"
+end
+
+def day4(path)
+  key = File.read(path || "day4_input.txt").strip
+  puts "Part 1: #{AOC2015.day4_part1(key)}"
+  puts "Part 2: #{AOC2015.day4_part2(key)}"
 end
 
 case ARGV[0].to_i
 when 1 then day1(ARGV[1])
 when 2 then day2(ARGV[1])
 when 3 then day3(ARGV[1])
+when 4 then day4(ARGV[1])
 else puts "Please supply a day to run: ./input_answers.rb <DAY NUMBER> (INPUT PATH)"
 end
 

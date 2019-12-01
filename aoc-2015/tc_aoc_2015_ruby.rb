@@ -51,5 +51,12 @@ class TestAOC2015 < Test::Unit::TestCase
     assert_equal(3, AOC2015.day3_part2("^>v<"))
     assert_equal(11, AOC2015.day3_part2("^v^v^v^v^v"))
   end
+
+  def test_day4_part1
+    assert_equal(609_043, AOC2015.day4_part1("abcdef"))
+    assert_equal(1_048_970, AOC2015.day4_part1("pqrstuv"))
+  end
+
+  # No examples available to test Day 4 Part 2
 end
 

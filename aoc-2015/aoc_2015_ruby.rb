@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require "digest"
+
 module AOC2015
 
   module_function
@@ -108,5 +110,18 @@ module AOC2015
     locations.uniq.size
   end
 
+  def day4_part1(key)
+    h = "xxxxx"
+    n = 0
+    h = Digest::MD5.hexdigest("#{key}#{n += 1}") until h[0..4] == "00000"
+    return n
+  end
+
+  def day4_part2(key)
+    h = "xxxxxx"
+    n = 0
+    h = Digest::MD5.hexdigest("#{key}#{n += 1}") until h[0..5] == "000000"
+    return n
+  end
 end
 
