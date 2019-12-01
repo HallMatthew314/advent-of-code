@@ -123,5 +123,22 @@ module AOC2015
     h = Digest::MD5.hexdigest("#{key}#{n += 1}") until h[0..5] == "000000"
     return n
   end
+
+  def day5_part1(strings)
+    nice_score = ->(s) do
+      return 0 if s =~ /ab|cd|pq|xy/
+      (s =~ /(.)\1/) && (s.scan(/[aeiou]/).size > 2) ? 1 : 0
+    end
+
+    strings.map { |s| nice_score.call(s) }.sum
+  end
+
+  def day5_part2(strings)
+    nice_score = ->(s) do
+      (s =~ /(..).*\1/) && (s =~ /(.).\1/) ? 1 : 0
+    end
+
+    strings.map { |s| nice_score.call(s) }.sum
+  end
 end
 
