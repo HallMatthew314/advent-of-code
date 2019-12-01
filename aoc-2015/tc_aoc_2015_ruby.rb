@@ -25,5 +25,10 @@ class TestAOC2015 < Test::Unit::TestCase
     assert_equal(1, AOC2015.day1_part2(")"))
     assert_equal(5, AOC2015.day1_part2("()())"))
   end
+
+  # TODO
+  def test_day2_part1
+    assert(true)
+  end
 end
 
