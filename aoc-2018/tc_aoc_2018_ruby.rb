@@ -9,6 +9,18 @@ class TestAOC2018 < Test::Unit::TestCase
   def test_day1
     assert_equal(0, AOC2018.day1("(())"))
     assert_equal(0, AOC2018.day1("()()"))
+
+    assert_equal(3, AOC2018.day1("((("))
+    assert_equal(3, AOC2018.day1("(()(()("))
+    assert_equal(3, AOC2018.day1("))((((("))
+
+    assert_equal(-1, AOC2018.day1("())"))
+    assert_equal(-1, AOC2018.day1("))("))
+
+    assert_equal(-3, AOC2018.day1(")))"))
+    assert_equal(-3, AOC2018.day1(")())())"))
+
+    # Add the original input if it still exists somewhere.
   end
 end
 
