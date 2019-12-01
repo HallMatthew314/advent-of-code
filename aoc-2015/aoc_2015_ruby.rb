@@ -5,7 +5,6 @@ module AOC2015
   module_function
 
   def day1_part1(directions)
-    raise ArgumentError unless /^[()]*$/ =~ directions
     directions.chars.map { |d| d == "(" ? 1 : -1 }.sum
   end
 
