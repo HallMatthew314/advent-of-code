@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-module AOC2018
+module AOC2015
 
   module_function
 
