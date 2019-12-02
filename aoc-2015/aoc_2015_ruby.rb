@@ -144,32 +144,41 @@ module AOC2015
   end
 
   def day6_part1(instructions)
-    actions = {}
-    actions["toggle"] = ->(b) { !b }
-    actions["turn off"] = ->(b) { false }
-    actions["turn on"] = ->(b) { true }
+    toggle = ->(l) { l == 1 ? 0 : 1 }
 
     # Initialise the matrix.
     rows = []
-    1_000.times { rows.push([false] * 1_000) }
+    1_000.times { rows.push([0] * 1_000) }
     lights = Matrix.rows(rows)
 
     # Loop the instructions.
     instructions.each do |step|
-      action = actions[step.match(/^(toggle|turn on|turn off)/)[1]]
+      action = step.match(/^(toggle|turn on|turn off)/)[1]
       coords = step.match(/(\d+),(\d+) through (\d+),(\d+)$/)
-      xs = coords[1].to_i
-      xe = coords[3].to_i
-      ys = coords[2].to_i
-      ye = coords[4].to_i
+      
+      x_range = coords[1].to_i..coords[3].to_i
+      y_range = coords[2].to_i..coords[4].to_i
 
-      (ys..ye).each do |y|
-        (xs..xe).each { |x| lights[y, x] = action.call(lights[y, x]) }
+      case action
+      when "toggle"
+        y_range.each do |y|
+          x_range.each { |x| lights[y, x] = toggle.call(lights[y, x]) }
+        end
+
+      when "turn on"
+        lights[x_range, y_range] = 1
+
+      when "turn off"
+        lights[x_range, y_range] = 0
+
+      else
+        raise "Invalid instruction"
       end
+
     end
 
     # Count the number of lights turned on.
-    lights.map { |c| c ? 1 : 0 }.sum
+    lights.sum
   end
 
   def day6_part2(instructions)
@@ -187,17 +196,16 @@ module AOC2015
     instructions.each do |step|
       action = actions[step.match(/^(toggle|turn on|turn off)/)[1]]
       coords = step.match(/(\d+),(\d+) through (\d+),(\d+)$/)
-      xs = coords[1].to_i
-      xe = coords[3].to_i
-      ys = coords[2].to_i
-      ye = coords[4].to_i
 
-      (ys..ye).each do |y|
-        (xs..xe).each { |x| lights[y, x] = action.call(lights[y, x]) }
+      x_range = coords[1].to_i..coords[3].to_i
+      y_range = coords[2].to_i..coords[4].to_i
+
+      y_range.each do |y|
+        x_range.each { |x| lights[y, x] = action.call(lights[y, x]) }
       end
     end
 
-    # Count the number of lights turned on.
+    # Sum the brightness of each light.
     lights.sum
   end
 
