@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require "digest"
+require "matrix"
 
 module AOC2015
 
@@ -139,6 +140,35 @@ module AOC2015
     end
 
     strings.map { |s| nice_score.call(s) }.sum
+  end
+
+  def day6_part1(instructions)
+    actions = {}
+    actions["toggle"] = ->(b) { !b }
+    actions["turn off"] = ->(b) { false }
+    actions["turn on"] = ->(b) { true }
+
+    # Initialise the matrix.
+    rows = []
+    1_000.times { rows.push([false] * 1_000) }
+    lights = Matrix.rows(rows)
+
+    # Loop the instructions.
+    instructions.each do |step|
+      action = actions[step.match(/^(toggle|turn on|turn off)/)[1]]
+      coords = step.match(/(\d+),(\d+) through (\d+),(\d+)$/)
+      xs = coords[1].to_i
+      xe = coords[3].to_i
+      ys = coords[2].to_i
+      ye = coords[4].to_i
+
+      (ys..ye).each do |y|
+        (xs..xe).each { |x| lights[y, x] = action.call(lights[y, x]) }
+      end
+    end
+
+    # Count the number of lights turned on.
+    lights.map { |c| c ? 1 : 0 }.sum
   end
 end
 
