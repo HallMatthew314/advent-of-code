@@ -99,5 +99,7 @@ class TestAOC2015 < Test::Unit::TestCase
       "turn off 499,499 through 500,500"
     ]))
   end
+
+  # No examples available to test Day 7
 end
 

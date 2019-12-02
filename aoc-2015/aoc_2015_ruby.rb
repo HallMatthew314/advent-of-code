@@ -199,5 +199,40 @@ module AOC2015
     # Count the number of lights turned on.
     lights.sum
   end
+
+  # Currently doesn't work
+  # Try using a binary tree
+  def day7_part1(circuit)
+    wires = {}
+    gates = {}
+    p_gate_test = /AND|LSHIFT|NOT|OR|RSHIFT/
+    # Captures: left, gate, right, destination
+    p_gate = /^(.+ )?([A-Z]+) (.+) -> (.+)$/
+    # Captures: source, destination
+    p_no_gate = /^(.+) -> (.+)$/
+
+    # Tests if an input is a wire or literal.
+    # Returns either the literal or the gate's value.
+    decode = ->(i) { i =~ /^[0-9]+$/ ? i.to_i : wires[i] }
+
+    gates["AND"] = ->(l, r) { decode.call(l.strip) & decode.call(r) }
+    gates["LSHIFT"] = ->(l, r) { decode.call(l.strip) << r.to_i }
+    gates["NOT"] = ->(_, r) { ~decode.call(r) }
+    gates["OR"] = ->(l, r) { decode.call(l.strip) | decode.call(r) }
+    gates["RSHIFT"] = ->(l, r) { decode.call(l.strip) >> r.to_i }
+
+    circuit.each do |connection|
+      if connection =~ p_gate_test
+        # there is a gate
+        data = connection.match(p_gate)
+        wires[data[4]] = gates[data[2]].call(data[1], data[3])
+      else
+        data = connection.match(p_no_gate)
+        wires[data[2]] = decode.call(data[1])
+      end
+    end
+
+    wires["a"]
+  end
 end
 
