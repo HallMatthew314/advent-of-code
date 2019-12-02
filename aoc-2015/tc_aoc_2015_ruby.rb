@@ -86,5 +86,18 @@ class TestAOC2015 < Test::Unit::TestCase
       "turn off 499,499 through 500,500"
     ]))
   end
+
+  def test_day6_part2
+    assert_equal(1_000_000, AOC2015.day6_part2(["turn on 0,0 through 999,999"]))
+    assert_equal(1_002_000, AOC2015.day6_part2([
+      "turn on 0,0 through 999,999",
+      "toggle 0,0 through 999,0"
+    ]))
+     assert_equal(1_001_996, AOC2015.day6_part2([
+      "turn on 0,0 through 999,999",
+      "toggle 0,0 through 999,0",
+      "turn off 499,499 through 500,500"
+    ]))
+  end
 end
 

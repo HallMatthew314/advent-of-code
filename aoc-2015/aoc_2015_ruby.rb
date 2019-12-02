@@ -170,5 +170,34 @@ module AOC2015
     # Count the number of lights turned on.
     lights.map { |c| c ? 1 : 0 }.sum
   end
+
+  def day6_part2(instructions)
+    actions = {}
+    actions["toggle"] = ->(i) { i + 2 }
+    actions["turn off"] = ->(i) { i > 0 ? i - 1 : 0 }
+    actions["turn on"] = ->(i) { i + 1 }
+
+    # Initialise the matrix.
+    rows = []
+    1_000.times { rows.push([0] * 1_000) }
+    lights = Matrix.rows(rows)
+
+    # Loop the instructions.
+    instructions.each do |step|
+      action = actions[step.match(/^(toggle|turn on|turn off)/)[1]]
+      coords = step.match(/(\d+),(\d+) through (\d+),(\d+)$/)
+      xs = coords[1].to_i
+      xe = coords[3].to_i
+      ys = coords[2].to_i
+      ye = coords[4].to_i
+
+      (ys..ye).each do |y|
+        (xs..xe).each { |x| lights[y, x] = action.call(lights[y, x]) }
+      end
+    end
+
+    # Count the number of lights turned on.
+    lights.sum
+  end
 end
 
