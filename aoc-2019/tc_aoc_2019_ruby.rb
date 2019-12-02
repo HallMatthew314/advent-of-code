@@ -18,5 +18,7 @@ class TestAOC2019 < Test::Unit::TestCase
     assert_equal(966, AOC2019.day1_part2([1_969]))
     assert_equal(50_346, AOC2019.day1_part2([100_756]))
   end
+
+  # No examples to test for Day 2
 end
 
