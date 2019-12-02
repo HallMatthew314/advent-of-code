@@ -53,6 +53,8 @@ class TestAOC2015 < Test::Unit::TestCase
   end
 
   def test_day4_part1
+    # These are commented because they take too long to run.
+    # Un-comment to test day 4.
     #assert_equal(609_043, AOC2015.day4_part1("abcdef"))
     #assert_equal(1_048_970, AOC2015.day4_part1("pqrstuv"))
   end

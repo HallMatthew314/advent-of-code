@@ -56,29 +56,30 @@ module AOC2015
 
   def day3_part1(directions)
     x = 0
-    y = 0
-    locations = [[x, y]]
+    y = 1
+    santa = [0, 0]
+    locations = [[0, 0]]
 
     directions.chars.each do |d|
       case d
-      when "^" then y -= 1
-      when "v" then y += 1
-      when "<" then x -= 1
-      when ">" then x += 1
+      when "^" then santa[y] -= 1
+      when "v" then santa[y] += 1
+      when "<" then santa[x] -= 1
+      when ">" then santa[x] += 1
       else raise "Uh oh, Spaghetti-Os"
       end
 
-      locations.push([x, y])
+      locations.push(santa.dup)
     end
     locations.uniq.size
   end
 
-  # REVIEW: There's probably a better way to do this.
   def day3_part2(directions)
-    s_x = 0
-    s_y = 0
-    r_x = 0
-    r_y = 0
+    # 'Constants' for readble indexing.
+    x = 0
+    y = 1
+    santa = [0, 0]
+    robot = [0, 0]
     robot_turn = false
 
     locations = [[0, 0]]
@@ -86,24 +87,24 @@ module AOC2015
     directions.chars.each do |d|
       if robot_turn
         case d
-        when "^" then r_y -= 1
-        when "v" then r_y += 1
-        when "<" then r_x -= 1
-        when ">" then r_x += 1
+        when "^" then robot[y] -= 1
+        when "v" then robot[y] += 1
+        when "<" then robot[x] -= 1
+        when ">" then robot[x] += 1
         else raise "Uh oh, Spaghetti-Os"
         end
 
-        locations.push([r_x, r_y])
+        locations.push(robot.dup)
       else
         case d
-        when "^" then s_y -= 1
-        when "v" then s_y += 1
-        when "<" then s_x -= 1
-        when ">" then s_x += 1
+        when "^" then santa[y] -= 1
+        when "v" then santa[y] += 1
+        when "<" then santa[x] -= 1
+        when ">" then santa[x] += 1
         else raise "Uh oh, Spaghetti-Os"
         end
 
-        locations.push([s_x, s_y])
+        locations.push(santa.dup)
       end
 
       robot_turn = !robot_turn
