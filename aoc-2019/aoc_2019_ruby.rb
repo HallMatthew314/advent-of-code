@@ -56,5 +56,74 @@ module AOC2019
 
     return "No valid inputs."
   end
+
+  # HACK
+  def day3_part1(wires)
+    path = /^([UDLR])(\d+)$/
+
+    wire1, wire2 = wires
+    points1 = [[0, 0]]
+    points2 = [[0, 0]]
+
+    wire1.each do |w|
+      data = w.match(path).captures
+
+      data[1].to_i.times do
+        point = points1.last.dup
+
+        case data[0]
+        when "U"
+          point[1] += 1
+
+        when "D"
+          point[1] -= 1
+
+        when "L"
+          point[0] -= 1
+
+        when "R"
+          point[0] += 1
+
+        else
+          raise "Bad direction"
+        end
+
+        points1.push(point)
+      end
+    end
+
+    wire2.each do |w|
+      data = w.match(path).captures
+
+      data[1].to_i.times do
+        point = points2.last.dup
+
+        case data[0]
+        when "U"
+          point[1] += 1
+
+        when "D"
+          point[1] -= 1
+
+        when "L"
+          point[0] -= 1
+
+        when "R"
+          point[0] += 1
+
+        else
+          raise "Bad direction"
+        end
+
+        points2.push(point)
+      end
+    end
+
+    intersections = (points1.uniq & points2.uniq) - [0, 0]
+
+    manhattan = ->(p) { p[0].abs + p[1].abs }
+
+    (intersections.map &manhattan).reject { |m| m == 0 }.min
+  end
 end
 
