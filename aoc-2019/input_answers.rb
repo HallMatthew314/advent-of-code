@@ -23,10 +23,17 @@ def day3(path)
   puts "Part 2: #{AOC2019.day3_part2(wires)}"
 end
 
+def day4(path)
+  range = File.read(path || "day4_input.txt").strip
+  puts "Part 1: #{AOC2019.day4_part1(range)}"
+  puts "Part 2: #{AOC2019.day4_part2(range)}"
+end
+
 case ARGV[0].to_i
 when 1 then day1(ARGV[1])
 when 2 then day2(ARGV[1])
 when 3 then day3(ARGV[1])
+when 4 then day4(ARGV[1])
 else puts "Please supply a day to run: ./input_answers.rb <DAY NUMBER> (INPUT PATH)"
 end
 

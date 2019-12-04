@@ -195,5 +195,28 @@ module AOC2019
       points1.find_index(i) + points2.find_index(i)
     end.min
   end
+
+  def day4_part1(range)
+    code_valid = ->(c) do
+      c =~ /(.)\1/ && c.chars == c.chars.sort
+    end
+
+    candidates = range.scan(/\d+/).map { |i| i.to_i }
+    candidates = (candidates[0]..candidates[1]).to_a.map { |c| c.to_s }
+
+    candidates.filter { |c| code_valid.call(c) }.size
+  end
+
+  def day4_part2(range)
+    code_valid = ->(c) do
+      c.chars == c.chars.sort &&
+      ("0".."9").to_a.map { |i| c.chars.count(i) }.any?(2)
+    end
+
+    candidates = range.scan(/\d+/).map { |i| i.to_i }
+    candidates = (candidates[0]..candidates[1]).to_a.map { |c| c.to_s }
+
+    candidates.filter { |c| code_valid.call(c) }.size
+  end
 end
 
