@@ -20,6 +20,7 @@ def day3(path)
     .map { |l| l.strip.split(",") }
 
   puts "Part 1: #{AOC2019.day3_part1(wires)}"
+  puts "Part 2: #{AOC2019.day3_part2(wires)}"
 end
 
 case ARGV[0].to_i
