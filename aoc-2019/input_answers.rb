@@ -29,11 +29,18 @@ def day4(path)
   puts "Part 2: #{AOC2019.day4_part2(range)}"
 end
 
+def day5(path)
+  c = File.read(path || "day5_input.txt").strip.split(",").map { |o| o.to_i }
+  puts "Part 1: #{AOC2019.day5_part1(c.dup, 1)}"
+  puts "Part 2: #{AOC2019.day5_part2(c.dup, 5)}"
+end
+
 case ARGV[0].to_i
 when 1 then day1(ARGV[1])
 when 2 then day2(ARGV[1])
 when 3 then day3(ARGV[1])
 when 4 then day4(ARGV[1])
+when 5 then day5(ARGV[1])
 else puts "Please supply a day to run: ./input_answers.rb <DAY NUMBER> (INPUT PATH)"
 end
 

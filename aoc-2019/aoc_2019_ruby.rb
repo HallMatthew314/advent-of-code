@@ -218,5 +218,131 @@ module AOC2019
 
     candidates.filter { |c| code_valid.call(c) }.size
   end
+
+  # HACK
+  def day5_part1(code, input)
+    index = 0
+    outputs = []
+
+    loop do
+      # Decode
+      p1 = if (code[index] / 100) % 10 == 1
+             code[index + 1]
+           else
+             code[code[index + 1]]
+           end
+
+      p2 = if (code[index] / 1_000) % 10 == 1
+             code[index + 2]
+           else
+             code[code[index + 2]]
+           end
+
+      p3 = if code[index] / 10_000 == 1
+             code[index + 3]
+           else
+             code[code[index + 3]]
+           end
+
+      opcode = code[index] % 100
+
+      # Execute
+      case opcode
+      when 1
+        code[code[index + 3]] = p1 + p2
+        index += 4
+
+      when 2
+        code[code[index + 3]] = p1 * p2
+        index += 4
+
+      when 3
+        # Get input here
+        code[code[index + 1]] = input
+        index += 2
+
+      when 4
+        outputs << code[code[index + 1]]
+        index += 2
+
+      when 99
+        return outputs
+
+      else 
+        raise "Invalid opcode: #{opcode}"
+      end
+    end
+  end
+
+  # HACK
+  def day5_part2(code, input)
+    index = 0
+    outputs = []
+
+    loop do
+      return outputs if code[index] % 100 == 99
+
+      # Decode
+      p1 = if (code[index] / 100) % 10 == 1
+             code[index + 1]
+           else
+             code[code[index + 1]]
+           end
+
+      p2 = if (code[index] / 1_000) % 10 == 1
+             code[index + 2]
+           else
+             code[code[index + 2]]
+           end
+
+      p3 = if code[index] / 10_000 == 1
+             code[index + 3]
+           else
+             code[code[index + 3]]
+           end
+
+      opcode = code[index] % 100
+
+      # Execute
+      case opcode
+      when 1
+        code[code[index + 3]] = p1 + p2
+        index += 4
+
+      when 2
+        code[code[index + 3]] = p1 * p2
+        index += 4
+
+      when 3
+        # Get input here
+        code[code[index + 1]] = input
+        index += 2
+
+      when 4
+        outputs << code[code[index + 1]]
+        index += 2
+
+      when 5
+        index = p1 == 0 ? index + 3 : p2
+
+      when 6
+        index = p1 == 0 ? p2 : index + 3
+
+      when 7
+        code[code[index + 3]] = p1 < p2 ? 1 :0
+        index += 4
+
+      when 8
+        code[code[index + 3]] = p1 == p2 ? 1 : 0
+        index += 4
+
+      when 99
+        return outputs
+
+      else 
+        raise "Invalid opcode: #{opcode}"
+      end
+    end
+  end
 end
 
