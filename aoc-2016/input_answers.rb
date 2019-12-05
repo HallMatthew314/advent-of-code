@@ -9,13 +9,13 @@ def day1(path)
   puts "Part 2: #{AOC2016.day1_part2(directions)}"
 end
 
-# Methods below this comment are copied from the 2019 file
-
 def day2(path)
-  c = File.read(path || "day2_input.txt").strip.split(",").map { |o| o.to_i }
-  puts "Part 1: #{AOC2016.day2_part1(c.dup, 12, 2)}"
-  puts "Part 2: #{AOC2016.day2_part2(c.dup, 19690720)}"
+  code = File.readlines(path || "day2_input.txt").map { |l| l.strip }
+  puts "Part 1: #{AOC2016.day2_part1(code)}"
+  puts "Part 2: #{AOC2016.day2_part2(code)}"
 end
+
+# Methods below this comment are copied from the 2019 file
 
 def day3(path)
   wires = File.readlines(path || "day3_input.txt")
@@ -33,7 +33,7 @@ end
 
 case ARGV[0].to_i
 when 1 then day1(ARGV[1])
-#when 2 then day2(ARGV[1])
+when 2 then day2(ARGV[1])
 #when 3 then day3(ARGV[1])
 #when 4 then day4(ARGV[1])
 else puts "Please supply a day to run: ./input_answers.rb <DAY NUMBER> (INPUT PATH)"

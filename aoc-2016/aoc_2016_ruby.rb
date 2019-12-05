@@ -53,5 +53,48 @@ module AOC2016
 
     raise "No location visited twice"
   end
+
+  def day2_part1(code)
+    digit_for_point = {
+      [-1, -1] => 1,
+      [0, -1] => 2,
+      [1, -1] => 3,
+      [-1, 0] => 4,
+      [0, 0] => 5,
+      [1, 0] => 6,
+      [-1, 1] => 7,
+      [0, 1] => 8,
+      [1, 1] => 9,
+    }
+
+    decode = ->(letters) do
+      point = [0, 0]
+      letters.chars.each do |l|
+        case l
+        when "L"
+          point[0] -= 1 unless point[0] == -1
+
+        when "R"
+          point[0] += 1 unless point[0] == 1
+
+        when "U"
+          point[1] -= 1 unless point[1] == -1
+
+        when "D"
+          point[1] += 1 unless point[1] == 1
+
+        else
+          raise "Bad letter: #{l}"
+        end
+      end
+      digit_for_point[point]
+    end
+
+    code.map { |letters| decode.call(letters) }.join
+  end
+
+  def day2_part2(code)
+    nil
+  end
 end
 
