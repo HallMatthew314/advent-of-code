@@ -1,7 +1,7 @@
 # Confessions
 
 **READER BEWARE: THIS FILE CONTAINS SPOILERS FOR SOME OF THE PROBLEMS IN ADVENT OF CODE.
-THEY ARE PLACED INSIDE `details` TAGS BUT YOUR BROWSER MAY NOT SUPPORT THIS, LEAVING THEM VISIBLE.
+THEY ARE PLACED INSIDE** `details` **TAGS BUT YOUR BROWSER MAY NOT SUPPORT THIS, LEAVING THEM VISIBLE.
 READ WITH CAUTION.**
 
 While all of the code in this repository is written by me, I cannot claim that all solutions presented are entirely my own.
