@@ -52,5 +52,39 @@ class TestAOC2019 < Test::Unit::TestCase
   end
 
   # No examples to test for Day 4
+
+  def test_day6_part1
+    assert_equal(42, AOC2019.day6_part1([
+      "COM)B",
+      "B)C",
+      "C)D",
+      "D)E",
+      "E)F",
+      "B)G",
+      "G)H",
+      "D)I",
+      "E)J",
+      "J)K",
+      "K)L"
+    ]))
+  end
+
+  def test_day6_part2
+    assert_equal(4, AOC2019.day6_part2([
+      "COM)B",
+      "B)C",
+      "C)D",
+      "D)E",
+      "E)F",
+      "B)G",
+      "G)H",
+      "D)I",
+      "E)J",
+      "J)K",
+      "K)L",
+      "K)YOU",
+      "I)SAN"
+    ]))
+  end
 end
 

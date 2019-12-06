@@ -344,5 +344,56 @@ module AOC2019
       end
     end
   end
+
+  def day6_part1(orbit_map)
+    orbits = {"COM" => nil}
+    # A)B - B orbits A - use B as hash index
+    orbit_map.map { |o| o.match(/(.+)\)(.+)/).captures }
+      .each { |c| orbits[c[1]] = c[0] }
+
+    inderect_orbits = ->(body) do
+      return 0 if body == "COM"
+
+      walker = orbits[body]
+      i = 0
+      until walker == "COM"
+        walker = orbits[walker]
+        i += 1
+      end
+
+      return i
+    end
+
+    orbits.keys.map { |o| inderect_orbits.call(o) }.sum +orbits.size - 1
+  end
+
+  def day6_part2(orbit_map)
+    orbits = {"COM" => nil}
+    orbit_map.map { |o| o.match(/(.+)\)(.+)/).captures }
+      .each { |c| orbits[c[1]] = c[0] }
+
+    orbit_chain = ->(body) do
+      c = []
+      walker = body
+      c.push(walker)
+
+      c.push(walker = orbits[walker]) until walker == "COM"
+
+      return c
+    end
+
+    chain_you = orbit_chain.call("YOU")
+    chain_san = orbit_chain.call("SAN")
+
+    # Move up chain_you untill we find the common parent
+    walker = "YOU"
+    walker = orbits[walker] until chain_san.include?(walker)
+    common_parent = walker
+
+    chain_san.pop until chain_san.last == common_parent
+    chain_you.pop until chain_you.last == common_parent
+
+    chain_you.size + chain_san.size - 4
+  end
 end
 
