@@ -103,5 +103,31 @@ class TestAOC2015 < Test::Unit::TestCase
   end
 
   # No examples available to test Day 7
+
+  def test_day8_part1
+    assert_equal(2, AOC2015.day8_part1(["\"\""]))
+    assert_equal(2, AOC2015.day8_part1(["\"abc\""]))
+    assert_equal(3, AOC2015.day8_part1(["\"aaa\\\"aaa\""]))
+    assert_equal(5, AOC2015.day8_part1(["\"\\x27\""]))
+    assert_equal(12, AOC2015.day8_part1([
+      "\"\"",
+      "\"abc\"",
+      "\"aaa\\\"aaa\"",
+      "\"\\x27\""
+    ]))
+  end
+
+  def test_day8_part2
+    assert_equal(4, AOC2015.day8_part2(["\"\""]))
+    assert_equal(4, AOC2015.day8_part2(["\"abc\""]))
+    assert_equal(6, AOC2015.day8_part2(["\"aaa\\\"aaa\""]))
+    assert_equal(5, AOC2015.day8_part2(["\"\\x27\""]))
+    assert_equal(19, AOC2015.day8_part2([
+      "\"\"",
+      "\"abc\"",
+      "\"aaa\\\"aaa\"",
+      "\"\\x27\""
+    ]))
+  end
 end
 

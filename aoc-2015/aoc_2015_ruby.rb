@@ -287,5 +287,44 @@ module AOC2015
 
     find.call("a")
   end
+
+  def day8_part1(strings)
+    sum_c = 0
+    sum_m = 0
+
+    strings.each do |s|
+      sum_c += s.size
+      c = s.chars
+      i = 0
+
+      while i < s.chars.size
+        sum_m += 1
+
+        i += case c[i..i + 1]
+             when ["\\", "\\"] then 2
+             when ["\\", "\""] then 2
+             when ["\\", "x"] then 4
+             else 1
+             end
+      end
+      sum_m -= 2
+    end
+
+    sum_c - sum_m
+  end
+
+  def day8_part2(strings)
+    expanded_size = ->(s) do
+      s.chars.map do |c|
+        case c
+        when "\"" then 2
+        when "\\" then 2
+        else 1
+        end
+      end.sum + 2
+    end
+
+    strings.map { |s| expanded_size.call(s) - s.size }.sum
+  end
 end
 
