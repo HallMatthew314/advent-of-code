@@ -67,8 +67,8 @@ module AOC2016
       [1, 1] => 9,
     }
 
-    decode = ->(letters) do
-      point = [0, 0]
+    decode = ->(letters, start) do
+      point = start
       letters.chars.each do |l|
         case l
         when "L"
@@ -87,10 +87,18 @@ module AOC2016
           raise "Bad letter: #{l}"
         end
       end
-      digit_for_point[point]
+      # Explicit return needed to return two things.
+      return point, digit_for_point[point]
     end
 
-    code.map { |letters| decode.call(letters) }.join
+    final_code = []
+    p = [0, 0]
+    code.each do |letters|
+      p, digit = decode.call(letters, p)
+      final_code << digit
+    end
+
+    final_code.join
   end
 
   def day2_part2(code)
@@ -110,8 +118,8 @@ module AOC2016
       [0, 2] => "D",
     }
 
-    decode = ->(letters) do
-      point = [-2, 0]
+    decode = ->(letters, start) do
+      point = start
       letters.chars.each do |l|
         case l
         when "L"
@@ -130,10 +138,17 @@ module AOC2016
           raise "Bad letter: #{l}"
         end
       end
-      digit_for_point[point]
+      return point, digit_for_point[point]
     end
 
-    code.map { |letters| decode.call(letters) }.join
+    final_code = []
+    p = [-2, 0]
+    code.each do |letters|
+      p, digit = decode.call(letters, p)
+      final_code << digit
+    end
+
+    final_code.join
   end
 end
 
