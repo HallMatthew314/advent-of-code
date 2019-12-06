@@ -94,7 +94,46 @@ module AOC2016
   end
 
   def day2_part2(code)
-    nil
+    digit_for_point = {
+      [0, -2] => 1,
+      [-1, -1] => 2,
+      [0, -1] => 3,
+      [1, -1] => 4,
+      [-2, 0] => 5,
+      [-1, 0] => 6,
+      [0, 0] => 7,
+      [1, 0] => 8,
+      [2, 0] => 9,
+      [-1, 1] => "A",
+      [0, 1] => "B",
+      [1, 1] => "C",
+      [0, 2] => "D",
+    }
+
+    decode = ->(letters) do
+      point = [-2, 0]
+      letters.chars.each do |l|
+        case l
+        when "L"
+          point[0] -= 1 unless digit_for_point[[point[0] - 1, point[1]]].nil?
+
+        when "R"
+          point[0] += 1 unless digit_for_point[[point[0] + 1, point[1]]].nil?
+
+        when "U"
+          point[1] -= 1 unless digit_for_point[[point[0], point[1] - 1]].nil?
+
+        when "D"
+          point[1] += 1 unless digit_for_point[[point[0], point[1] + 1]].nil?
+
+        else
+          raise "Bad letter: #{l}"
+        end
+      end
+      digit_for_point[point]
+    end
+
+    code.map { |letters| decode.call(letters) }.join
   end
 end
 
