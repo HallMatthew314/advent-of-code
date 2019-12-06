@@ -246,5 +246,46 @@ module AOC2015
 
     find.call("a")
   end
+
+  def day7_part2(circuit)
+    gates = {}
+    gates["AND"] = ->(l, r) { l & r }
+    gates["LSHIFT"] = ->(l, r) { l << r }
+    gates["NOT"] = ->(_, r) { ~r }
+    gates["OR"] = ->(l, r) { l | r }
+    gates["RSHIFT"] = ->(l, r) { l >> r }
+
+    wires = {}
+    circuit.map { |conn| conn.match(/^(.+) -> ([a-z]+)$/).captures }
+      .each { |c| wires[c[1]] = c[0] }
+
+    # Override wire `b` with value of wire `a` in the last question.
+    wires["b"] = day7_part1(circuit) 
+
+    find = ->(w) do
+      return nil if w.nil?
+      return w.to_i if w.is_a?(Integer) || w =~ /^[0-9]+$/
+
+      val = wires[w]
+      # Int literal
+      if val.is_a?(Integer) || val =~ /^[0-9]+$/
+        wires[w] = val.to_i
+
+      # Direct from another wire
+      elsif val =~ /^[a-z]+$/
+        wires[w] = find.call(val)
+
+      # Gate
+      else
+        left, gate, right = val.match(/^(.+ )?(.+) (.+)$/).captures
+        left = find.call(left&.strip)
+        right = find.call(right)
+        wires[w] = gates[gate].call(left, right)
+      end
+      return wires[w]
+    end
+
+    find.call("a")
+  end
 end
 

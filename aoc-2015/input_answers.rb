@@ -42,6 +42,7 @@ end
 def day7(path)
   circuit = File.readlines(path || "day7_input.txt").map { |l| l.strip }
   puts "Part 1: #{AOC2015.day7_part1(circuit)}"
+  puts "Part 2: #{AOC2015.day7_part2(circuit)}"
 end
 
 case ARGV[0].to_i
