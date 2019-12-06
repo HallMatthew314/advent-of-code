@@ -266,7 +266,7 @@ module AOC2019
         index += 2
 
       when 99
-        return outputs
+        return outputs.last
 
       else 
         raise "Invalid opcode: #{opcode}"
@@ -337,7 +337,7 @@ module AOC2019
         index += 4
 
       when 99
-        return outputs
+        return outputs.last
 
       else 
         raise "Invalid opcode: #{opcode}"
