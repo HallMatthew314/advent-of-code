@@ -209,39 +209,42 @@ module AOC2015
     lights.sum
   end
 
-  # Currently doesn't work
-  # Try using a binary tree
   def day7_part1(circuit)
-    wires = {}
     gates = {}
-    p_gate_test = /AND|LSHIFT|NOT|OR|RSHIFT/
-    # Captures: left, gate, right, destination
-    p_gate = /^(.+ )?([A-Z]+) (.+) -> (.+)$/
-    # Captures: source, destination
-    p_no_gate = /^(.+) -> (.+)$/
+    gates["AND"] = ->(l, r) { l & r }
+    gates["LSHIFT"] = ->(l, r) { l << r }
+    gates["NOT"] = ->(_, r) { ~r }
+    gates["OR"] = ->(l, r) { l | r }
+    gates["RSHIFT"] = ->(l, r) { l >> r }
 
-    # Tests if an input is a wire or literal.
-    # Returns either the literal or the gate's value.
-    decode = ->(i) { i =~ /^[0-9]+$/ ? i.to_i : wires[i] }
+    wires = {}
+    circuit.map { |conn| conn.match(/^(.+) -> ([a-z]+)$/).captures }
+      .each { |c| wires[c[1]] = c[0] }
 
-    gates["AND"] = ->(l, r) { decode.call(l.strip) & decode.call(r) }
-    gates["LSHIFT"] = ->(l, r) { decode.call(l.strip) << r.to_i }
-    gates["NOT"] = ->(_, r) { ~decode.call(r) }
-    gates["OR"] = ->(l, r) { decode.call(l.strip) | decode.call(r) }
-    gates["RSHIFT"] = ->(l, r) { decode.call(l.strip) >> r.to_i }
+    find = ->(w) do
+      return nil if w.nil?
+      return w.to_i if w.is_a?(Integer) || w =~ /^[0-9]+$/
 
-    circuit.each do |connection|
-      if connection =~ p_gate_test
-        # there is a gate
-        data = connection.match(p_gate)
-        wires[data[4]] = gates[data[2]].call(data[1], data[3])
+      val = wires[w]
+      # Int literal
+      if val.is_a?(Integer) || val =~ /^[0-9]+$/
+        wires[w] = val.to_i
+
+      # Direct from another wire
+      elsif val =~ /^[a-z]+$/
+        wires[w] = find.call(val)
+
+      # Gate
       else
-        data = connection.match(p_no_gate)
-        wires[data[2]] = decode.call(data[1])
+        left, gate, right = val.match(/^(.+ )?(.+) (.+)$/).captures
+        left = find.call(left&.strip)
+        right = find.call(right)
+        wires[w] = gates[gate].call(left, right)
       end
+      return wires[w]
     end
 
-    wires["a"]
+    find.call("a")
   end
 end
 
