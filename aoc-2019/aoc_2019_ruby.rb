@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require_relative "intcode_computer5.rb"
+
 module AOC2019
 
   module_function
@@ -394,6 +396,59 @@ module AOC2019
     chain_you.pop until chain_you.last == common_parent
 
     chain_you.size + chain_san.size - 4
+  end
+
+  def day7_part1(code)
+    signals = {}
+    computer = IntcodeComputer5.new(code)
+
+    (0..4).to_a.permutation do |p|
+      input_signal = 0
+
+      # REVIEW: Maybe a loop could be used here?
+      # Thruster A
+      input_signal = computer.run([p[0], input_signal]).first
+
+      # Thruster B
+      input_signal = computer.run([p[1], input_signal]).first
+
+      # Thruster C
+      input_signal = computer.run([p[2], input_signal]).first
+
+      # Thruster D
+      input_signal = computer.run([p[3], input_signal]).first
+
+      # Thruster E, store result
+      signals[p] = computer.run([p[4], input_signal]).first
+    end
+    signals.values.max
+  end
+
+  # TODO: The IntcodeComputer5 class is NOT designed for this
+  def day7_part2(code)
+    signals = {}
+    computer = IntcodeComputer5.new(code)
+
+    (5..9).to_a.permutation do |p|
+      input_signal = 0
+
+      # REVIEW: Maybe a loop could be used here?
+      # Thruster A
+      input_signal = computer.run([p[0], input_signal]).first
+
+      # Thruster B
+      input_signal = computer.run([p[1], input_signal]).first
+
+      # Thruster C
+      input_signal = computer.run([p[2], input_signal]).first
+
+      # Thruster D
+      input_signal = computer.run([p[3], input_signal]).first
+
+      # Thruster E, store result
+      signals[p] = computer.run([p[4], input_signal]).first
+    end
+    signals.values.max
   end
 end
 
