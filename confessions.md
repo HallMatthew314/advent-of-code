@@ -23,3 +23,16 @@ Below are the problems that I have researched and what I learned from doing so.
 	After doing some more research after the fact, it seems that I was not the only person who ran into this problem.
 </details>
 
+<details>
+	<summary>2019 - Day 8 Part 2</summary>
+	I intially found this problem to be worded problematically, as the phrase <q cite="https://adventofcode.com/2019/day/8">What message is produced after decoding your image?</q> is somewhat vague.
+	This question does not give any sort of indication as to what kind of message is being sent.
+	One could only infer that it could fit in a black-and-white bitmap of size 25x6.
+	This lack of information made it troublesome to debug my solution.
+	I was confident that the process I had devised would work, but I wasn't getting anything meaningful when I ran my code.
+	After checking the subreddit, I saw some example outputs and realised what the problem was.
+	The height of the example solutions I saw was 6, which was also stated in the proble, description.
+	However, I had declared the height to be 8 in my code.
+	I changed this to 6 and the output was much more legible, as well as providing the correct solution.
+</details>
+
