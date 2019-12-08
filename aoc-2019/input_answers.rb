@@ -47,6 +47,12 @@ def day7(path)
   puts "Part 2: #{AOC2019.day7_part2(c)}"
 end
 
+def day8(path)
+  image = File.read(path || "day8_input.txt").strip
+  puts "Part 1: #{AOC2019.day8_part1(image)}"
+  puts "Part 2:\n#{AOC2019.day8_part2(image)}"
+end
+
 case ARGV[0].to_i
 when 1 then day1(ARGV[1])
 when 2 then day2(ARGV[1])
@@ -55,6 +61,7 @@ when 4 then day4(ARGV[1])
 when 5 then day5(ARGV[1])
 when 6 then day6(ARGV[1])
 when 7 then day7(ARGV[1])
+when 8 then day8(ARGV[1])
 else puts "Please supply a day to run: ./input_answers.rb <DAY NUMBER> (INPUT PATH)"
 end
 
