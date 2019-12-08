@@ -402,34 +402,28 @@ module AOC2019
     signals = {}
     computer = IntcodeComputer5.new(code)
 
-    (0..4).to_a.permutation do |p|
-      input_signal = 0
+    (0..4).to_a.permutation do |perm|
+      signal = 0
 
-      # REVIEW: Maybe a loop could be used here?
-      # Thruster A
-      input_signal = computer.run([p[0], input_signal]).first
+      perm.each do |p|
+        computer.reset
+        computer.run([p, signal])
+        signal = computer.fetch_output
+      end
 
-      # Thruster B
-      input_signal = computer.run([p[1], input_signal]).first
-
-      # Thruster C
-      input_signal = computer.run([p[2], input_signal]).first
-
-      # Thruster D
-      input_signal = computer.run([p[3], input_signal]).first
-
-      # Thruster E, store result
-      signals[p] = computer.run([p[4], input_signal]).first
+      signals[perm] = signal
     end
     signals.values.max
   end
 
-  # TODO: The IntcodeComputer5 class is NOT designed for this
   def day7_part2(code)
     signals = {}
     computer = IntcodeComputer5.new(code)
 
     (5..9).to_a.permutation do |p|
+      
+
+      # IGNORE BELOW THIS COMMENT
       input_signal = 0
 
       # REVIEW: Maybe a loop could be used here?

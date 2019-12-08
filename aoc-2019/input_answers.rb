@@ -44,7 +44,7 @@ end
 def day7(path)
   c = File.read(path || "day7_input.txt").strip.split(",").map { |o| o.to_i }
   puts "Part 1: #{AOC2019.day7_part1(c)}"
-  puts "Part 2: #{AOC2019.day7_part2(c)}"
+  #puts "Part 2: #{AOC2019.day7_part2(c)}"
 end
 
 case ARGV[0].to_i
