@@ -441,16 +441,13 @@ module AOC2019
     signals.values.max
   end
 
-  # TODO: Learn how Range.step works
   def day8_part1(image, width=25, height=6)
     layer_size = width * height
 
     layers = []
 
-    i = 0
-    while i < image.size
-      layers << image[i, layer_size].chars
-      i += layer_size
+    (0...image.size).step(layer_size) do |i|
+      layers << image[i, layer_size]
     end
 
     target_layer = layers.sort do |l, m| 
@@ -462,34 +459,21 @@ module AOC2019
 
   def day8_part2(image, width=25, height=6)
     layer_size = width * height
-    layers = []
 
-    i = 0
-    while i < image.size
-      layers << image[i, layer_size].chars
-      i += layer_size
+    layers = []
+    (0...image.size).step(layer_size) do |i|
+      layers << image[i, layer_size]
     end
 
-    final = ["2"] * layer_size
+    final = layers.shift
 
     layers.each do |l|
-      l.each_index { |i| final[i] = l[i] if final[i] == "2" }
+      l.chars.each_index { |i| final[i] = l[i] if final[i] == "2" }
     end
 
     str = ""
-    i = 0
-    while i < layer_size
-      str << "#{final[i, width].join}\n"
-      i += width
-    end
-
-    str.chars.map do |c|
-      case c
-      when "0" then " "
-      when "1" then "#"
-      else c
-      end
-    end.join.strip
+    (0...layer_size).step(width) { |i| str << "#{final[i, width]}\n" }
+    str.gsub(/\d/, {"0" => " ", "1" => "#"}).strip
   end
 end
 
