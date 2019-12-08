@@ -51,6 +51,9 @@ class IntcodeComputer5
   end
 
   def step
+
+    #return if @state == "DONE"
+
     @cycle += 1
 
     # HLT
@@ -61,25 +64,30 @@ class IntcodeComputer5
 
     # Decode
     # Parameter 1
-    p1 = if (@memory[@mem_ptr] / 100) % 10 == 1
-           @memory[@mem_ptr + 1]
-         else
-           @memory[@memory[@mem_ptr + 1]]
-         end
-
+    unless @memory[@mem_ptr + 1].nil?
+      p1 = if (@memory[@mem_ptr] / 100) % 10 == 1
+             @memory[@mem_ptr + 1]
+           else
+             @memory[@memory[@mem_ptr + 1]]
+           end
+    end
     # Parameter 2
-    p2 = if (@memory[@mem_ptr] / 1_000) % 10 == 1
-           @memory[@mem_ptr + 2]
-         else
-           @memory[@memory[@mem_ptr + 2]]
-         end
+    unless @memory[@mem_ptr + 2].nil?
+      p2 = if (@memory[@mem_ptr] / 1_000) % 10 == 1
+             @memory[@mem_ptr + 2]
+           else
+             @memory[@memory[@mem_ptr + 2]]
+           end
+    end
 
     # Parameter 3
-    p3 = if @memory[@mem_ptr] / 10_000 == 1
-            @memory[@mem_ptr + 3]
-         else
-            @memory[@memory[@mem_ptr + 3]]
-         end
+    unless @memory[@mem_ptr + 3].nil?
+      p3 = if @memory[@mem_ptr] / 10_000 == 1
+              @memory[@mem_ptr + 3]
+           else
+              @memory[@memory[@mem_ptr + 3]]
+           end
+    end
 
     # Opcode
     opcode = @memory[@mem_ptr] % 100

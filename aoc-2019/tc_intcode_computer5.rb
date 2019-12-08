@@ -14,6 +14,15 @@ class TestIntcodeComputer5 < Test::Unit::TestCase
     assert_equal(1, com.fetch_output)
   end
 
+  def test_steps_only
+    code = [3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8]
+    com = IntcodeComputer5.new(code)
+    com.send_input(8)
+
+    com.step until com.state == "DONE"
+    assert_equal(1, com.fetch_output)
+  end
+
   def test_idle_state
     code = [3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8]
     com = IntcodeComputer5.new(code)
