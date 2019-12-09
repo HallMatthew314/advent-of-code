@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require_relative "intcode_computer5.rb"
+require_relative "intcode_computer.rb"
 
 module AOC2019
 

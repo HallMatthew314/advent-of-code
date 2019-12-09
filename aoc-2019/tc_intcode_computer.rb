@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 require "test/unit"
-require_relative "intcode_computer5.rb"
+require_relative "intcode_computer.rb"
 
 class TestIntcodeComputer5 < Test::Unit::TestCase
 
