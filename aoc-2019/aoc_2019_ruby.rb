@@ -400,7 +400,7 @@ module AOC2019
 
   def day7_part1(code)
     signals = {}
-    computer = IntcodeComputer5.new(code)
+    computer = IntcodeComputer.new(code)
 
     (0..4).to_a.permutation do |perm|
       signal = 0
@@ -421,7 +421,7 @@ module AOC2019
 
     (5..9).to_a.permutation do |perm|
       computers = []
-      5.times { computers << IntcodeComputer5.new(code) }
+      5.times { computers << IntcodeComputer.new(code) }
       perm.each_index { |i| computers[i].send_input(perm[i]) }
       computers.first.send_input(0)
 
@@ -477,14 +477,14 @@ module AOC2019
   end
 
   def day9_part1(code)
-    com = IntcodeComputer5.new(code)
+    com = IntcodeComputer.new(code)
     com.send_input(1)
     com.run
     com.fetch_output
   end
 
   def day9_part2(code)
-    com = IntcodeComputer5.new(code)
+    com = IntcodeComputer.new(code)
     com.send_input(2)
     com.run
     com.fetch_output

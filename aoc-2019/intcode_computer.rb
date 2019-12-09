@@ -1,7 +1,8 @@
 # encoding: utf-8
 
-# Intcode Computer class following specifications of Day 5.
-class IntcodeComputer5
+# To be updated in accordance with growing specifications.
+# Backwards-compatibility has not been tested.
+class IntcodeComputer
 
   # @state values:
   # READY - Program has not started.
