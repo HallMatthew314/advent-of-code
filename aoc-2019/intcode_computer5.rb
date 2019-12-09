@@ -10,6 +10,9 @@ class IntcodeComputer5
   # CRASH - Program encountered invalid opcode.
   # DONE - Program reached halt opcode.
 
+  # Just to be safe
+  MEMORY_CELLS = 1_000_000
+
   def initialize(program)
     unless program.is_a?(Array)
       raise ArgumentError, "Program was not an Array"
@@ -21,9 +24,11 @@ class IntcodeComputer5
   end
 
   def reset
-    @memory = @program.dup
+    @memory = [0] * MEMORY_CELLS
+    @program.each_index { |i| @memory[i] = @program[i] }
     @cycle = 0
     @mem_ptr = 0
+    @rel_base = 0
     @state = "READY"
     @input_queue = []
     @output_queue = []
@@ -52,8 +57,6 @@ class IntcodeComputer5
 
   def step
 
-    #return if @state == "DONE"
-
     @cycle += 1
 
     # HLT
@@ -65,28 +68,16 @@ class IntcodeComputer5
     # Decode
     # Parameter 1
     unless @memory[@mem_ptr + 1].nil?
-      p1 = if (@memory[@mem_ptr] / 100) % 10 == 1
-             @memory[@mem_ptr + 1]
-           else
-             @memory[@memory[@mem_ptr + 1]]
-           end
+      p1 = decode_parameter(@mem_ptr + 1, @memory[@mem_ptr] / 100 % 10)
     end
     # Parameter 2
     unless @memory[@mem_ptr + 2].nil?
-      p2 = if (@memory[@mem_ptr] / 1_000) % 10 == 1
-             @memory[@mem_ptr + 2]
-           else
-             @memory[@memory[@mem_ptr + 2]]
-           end
+      p2 = decode_parameter(@mem_ptr + 2, @memory[@mem_ptr] / 1_000 % 10)
     end
 
     # Parameter 3
     unless @memory[@mem_ptr + 3].nil?
-      p3 = if @memory[@mem_ptr] / 10_000 == 1
-              @memory[@mem_ptr + 3]
-           else
-              @memory[@memory[@mem_ptr + 3]]
-           end
+      p3 = decode_parameter(@mem_ptr + 3, @memory[@mem_ptr] / 10_000)
     end
 
     # Opcode
@@ -97,12 +88,12 @@ class IntcodeComputer5
 
     # ADD
     when 1
-      @memory[@memory[@mem_ptr + 3]] = p1 + p2
+      @memory[p3] = @memory[p1] + @memory[p2]
       @mem_ptr += 4
 
     # MUL
     when 2
-      @memory[@memory[@mem_ptr + 3]] = p1 * p2
+      @memory[p3] = @memory[p1] * @memory[p2]
       @mem_ptr += 4
 
     # INP
@@ -110,33 +101,38 @@ class IntcodeComputer5
       if @input_queue.empty?
         @state = "IDLE"
       else
-        @memory[@memory[@mem_ptr + 1]] = @input_queue.shift
+        @memory[p1] = @input_queue.shift
         @mem_ptr += 2
         @state = "RUNNING"
       end
 
     # OUT
     when 4
-      @output_queue << @memory[@memory[@mem_ptr + 1]]
+      @output_queue << @memory[p1]
       @mem_ptr += 2
 
     # JEZ
     when 5
-      @mem_ptr = p1 == 0 ? @mem_ptr + 3 : p2
+      @mem_ptr = @memory[p1] == 0 ? @mem_ptr + 3 : @memory[p2]
 
     # JNZ
     when 6
-      @mem_ptr = p1 == 0 ? p2 : @mem_ptr + 3
+      @mem_ptr = @memory[p1] == 0 ? @memory[p2] : @mem_ptr + 3
 
     # LST
     when 7
-      @memory[@memory[@mem_ptr + 3]] = p1 < p2 ? 1 :0
+      @memory[p3] = @memory[p1] < @memory[p2] ? 1 : 0
       @mem_ptr += 4
 
     # EQL
     when 8
-      @memory[@memory[@mem_ptr + 3]] = p1 == p2 ? 1 : 0
+      @memory[p3] = @memory[p1] == @memory[p2] ? 1 : 0
       @mem_ptr += 4
+
+    # ARB
+    when 9
+      @rel_base += @memory[p1]
+      @mem_ptr += 2
 
     else
       @state = "CRASH"
@@ -146,12 +142,37 @@ class IntcodeComputer5
     end
   end
 
+  def view_output
+    @output_queue.dup
+  end
+
   def state
     @state
   end
 
   def error_log
     @error_log
+  end
+
+  private
+
+#  def decode_parameter(p, m)
+#    case m
+#    when 0 then should_return_index ? @memory[@memory[p]] : p
+#    when 1 then @memory[p]
+#    when 2 then should_return_index ? @memory[@rel_base + p] : @rel_base + p
+#    else
+#      #@state = "CRASH"
+#      raise "CRASH - Bad parameter mode: #{m}"
+#    end
+#  end
+
+  def decode_parameter(p, m)
+    case m
+    when 0 then @memory[p]
+    when 1 then p
+    when 2 then @rel_base + @memory[p]
+    end
   end
 end
 

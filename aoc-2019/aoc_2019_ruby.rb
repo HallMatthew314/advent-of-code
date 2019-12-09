@@ -475,5 +475,19 @@ module AOC2019
     (0...layer_size).step(width) { |i| str << "#{final[i, width]}\n" }
     str.gsub(/\d/, {"0" => " ", "1" => "#"}).strip
   end
+
+  def day9_part1(code)
+    com = IntcodeComputer5.new(code)
+    com.send_input(1)
+    com.run
+    com.fetch_output
+  end
+
+  def day9_part2(code)
+    com = IntcodeComputer5.new(code)
+    com.send_input(2)
+    com.run
+    com.fetch_output
+  end
 end
 
