@@ -473,7 +473,7 @@ module AOC2019
 
     str = ""
     (0...layer_size).step(width) { |i| str << "#{final[i, width]}\n" }
-    str.gsub(/\d/, {"0" => " ", "1" => "#"}).strip
+    str.gsub(/\d/, {"0" => " ", "1" => "#"}).chomp
   end
 
   def day9_part1(code)
