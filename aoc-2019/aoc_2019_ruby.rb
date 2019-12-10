@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+require "matrix"
 require_relative "intcode_computer.rb"
 
 module AOC2019
@@ -488,6 +489,90 @@ module AOC2019
     com.send_input(2)
     com.run
     com.fetch_output
+  end
+
+  def day10_part1(grid)
+    width = grid[0].size
+    height = grid.size
+    points = []
+
+    # Extract locations of asteroids.
+    (0...height).each do |y|
+      (0...width).each { |x| points.push([x, y]) if grid[y][x] == "#" }
+    end
+
+    count_lines = ->(base) do
+      # Names less, equal, greater refer to x values.
+      points_less = points.filter { |p| p[0] < base[0] }
+      points_equal = points.filter { |p| p[0] == base[0] }
+      points_greater = points.filter { |p| p[0] > base[0] }
+
+      lines = ->(p) do
+        a, b = base[0] > p[0] ? [base, p] : [p, base]
+
+        m = (a[1] - b[1]).to_r / (a[0] - b[0]).abs
+        c = a[1] - (m * a[0])
+
+        [m, c]
+      end
+
+      count_less = (points_less.map &lines).uniq.size
+      count_greater = (points_greater.map &lines).uniq.size
+      count_equal = 0
+      count_equal += 1 if points_equal.any? { |p| p[1] < base[1] }
+      count_equal += 1 if points_equal.any? { |p| p[1] > base[1] }
+
+      [base, count_less + count_greater + count_equal]
+    end
+
+    (points.map &count_lines).max { |a, b| a[1] <=> b[1] }
+  end
+
+  def day10_part2(grid)
+    station = day10_part1(grid)[0].dup
+    width = grid[0].size
+    height = grid.size
+    points = []
+
+    normalize = ->(p) { [p[0] - station[0], p[1] - station[1]] }
+    denormalize = ->(p) { [p[0] + station[0], p[1] + station[1]] }
+    ed_from_origin = ->(p) { Math.sqrt(p[0]**2 + p[1]**2) }
+
+    angle_from_origin = ->(p) do 
+      a = Math.atan2(p[0], p[1])
+      -(a - a > Math::PI ? Math::PI / 4 : 0)
+    end
+
+    # Extract locations of asteroids.
+    (0...height).each do |y|
+      (0...width).each { |x| points.push([x, y]) if grid[y][x] == "#" }
+    end
+
+    n_points = points.map &normalize
+
+    angles = {}
+
+    n_points.each do |p|
+      a = angle_from_origin.call(p)
+      angles[a] ? angles[a].push(p.dup) : angles[a] = [p.dup]
+    end
+
+    angles.each_value do |v|
+      v.sort! { |a, b| ed_from_origin.call(a) <=> ed_from_origin.call(b) } 
+    end
+
+    angles = angles.to_a.sort { |a, b| a[0] <=> b[0] }
+      .map { |a| a[1] }
+
+    queue = []
+    i = 0
+    until queue.size == points.size
+      queue.push(angles[i].shift) unless angles[i] == []
+      i = (i + 1) % angles.size
+    end
+
+    target200 = denormalize.call(queue[200])
+    target200[0] * 100 + target200[1]
   end
 end
 

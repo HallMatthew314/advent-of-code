@@ -59,6 +59,12 @@ def day9(path)
   puts "Part 2: #{AOC2019.day9_part2(c)}"
 end
 
+def day10(path)
+  grid = File.readlines(path || "day10_input.txt").map { |l| l.strip }
+  puts "Part 1: #{AOC2019.day10_part1(grid)}"
+  puts "Part 2: #{AOC2019.day10_part2(grid)}"
+end
+
 case ARGV[0].to_i
 when 1 then day1(ARGV[1])
 when 2 then day2(ARGV[1])
@@ -69,6 +75,7 @@ when 6 then day6(ARGV[1])
 when 7 then day7(ARGV[1])
 when 8 then day8(ARGV[1])
 when 9 then day9(ARGV[1])
+when 10 then day10(ARGV[1])
 else puts "Please supply a day to run: ./input_answers.rb <DAY NUMBER> (INPUT PATH)"
 end
 
