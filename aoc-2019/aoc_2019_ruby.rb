@@ -536,19 +536,17 @@ module AOC2019
 
     normalize = ->(p) { [p[0] - station[0], p[1] - station[1]] }
     denormalize = ->(p) { [p[0] + station[0], p[1] + station[1]] }
-    ed_from_origin = ->(p) { Math.sqrt(p[0]**2 + p[1]**2) }
+    radius = ->(p) { Math.sqrt(p[0]**2 + p[1]**2) }
 
-    angle_from_origin = ->(p) do 
-      a = Math.atan2(p[0], p[1])
-      -(a - a > Math::PI ? Math::PI / 4 : 0)
-    end
+    angle_from_origin = ->(p) { Math.atan2(p[0], p[1]) }
 
     # Extract locations of asteroids.
     (0...height).each do |y|
       (0...width).each { |x| points.push([x, y]) if grid[y][x] == "#" }
     end
 
-    n_points = points.map &normalize
+    n_points = (points.map &normalize) - [[0, 0]]
+    puts "TEST - n_points contains origin: #{n_points.include?([0,0])}"
 
     angles = {}
 
@@ -558,21 +556,25 @@ module AOC2019
     end
 
     angles.each_value do |v|
-      v.sort! { |a, b| ed_from_origin.call(a) <=> ed_from_origin.call(b) } 
+      v.sort! { |a, b| radius.call(a) <=> radius.call(b) } 
     end
 
-    angles = angles.to_a.sort { |a, b| a[0] <=> b[0] }
-      .map { |a| a[1] }
+    angles[Math::PI / 2] = [] if angles[Math::PI / 2].nil?
 
-    queue = []
-    i = 0
-    until queue.size == points.size
-      queue.push(angles[i].shift) unless angles[i] == []
+    angle_keys = angles.keys.sort
+    destroyed = []
+    i = angle_keys.index(Math::PI / 2)
+
+    until destroyed.size == 200
+      k = angle_keys[i]
+      destroyed.push(angles[k].shift) unless angles[k].empty?
       i = (i + 1) % angles.size
     end
 
-    target200 = denormalize.call(queue[200])
+    target200 = denormalize.call(destroyed.last)
     target200[0] * 100 + target200[1]
+
+    destroyed.map &denormalize
   end
 end
 
