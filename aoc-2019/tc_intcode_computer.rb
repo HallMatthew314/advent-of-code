@@ -44,6 +44,32 @@ class TestIntcodeComputer < Test::Unit::TestCase
     assert_equal(1, com.fetch_output)
   end
 
+  def test_crash_state_opcode
+    com = IntcodeComputer.new([0, 0, 0, 0, 99])
+
+    assert_nothing_raised { com.run }
+    assert_equal("CRASH", com.state)
+    assert(!com.error_log.nil?)
+  end
+
+  def test_crash_state_parameter_mode
+    com = IntcodeComputer.new([301, 0, 0, 0, 99])
+
+    assert_nothing_raised { com.run }
+    assert_equal("CRASH", com.state)
+    assert(!com.error_log.nil?)
+  end
+
+  def test_day5_example1
+    i = Random.rand(100)
+    com = IntcodeComputer.new([3, 0, 4, 0, 99])
+    com.send_input(i)
+
+    assert_nothing_raised { com.run }
+    assert_equal([i], com.view_output)
+    assert_equal(i, com.fetch_output)
+  end
+
   def test_day9_example1
     code = [109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99]
     com = IntcodeComputer.new(code)

@@ -1,15 +1,15 @@
 # encoding: utf-8
 
 # To be updated in accordance with growing specifications.
-# Backwards-compatibility has not been tested.
 class IntcodeComputer
 
-  # @state values:
-  # READY - Program has not started.
-  # RUNNING - Program is running.
-  # IDLE - Program is waiting for input (queue is empty).
-  # CRASH - Program encountered invalid opcode.
-  # DONE - Program reached halt opcode.
+  STATE = {
+    :ready => "READY",
+    :running => "RUNNING",
+    :idle => "IDLE",
+    :crash => "CRASH",
+    :done => "DONE"
+  }
 
   # Just to be safe
   MEMORY_CELLS = 1_000_000
@@ -30,7 +30,7 @@ class IntcodeComputer
     @cycle = 0
     @mem_ptr = 0
     @rel_base = 0
-    @state = "READY"
+    @state = STATE[:ready]
     @input_queue = []
     @output_queue = []
     @error_log = nil
@@ -50,8 +50,8 @@ class IntcodeComputer
     raise ArgumentError, "Input was not an Array" unless inputs.is_a?(Array)
     inputs.each { |i| send_input(i) }
 
-    @state = "RUNNING"
-    step while @state == "RUNNING"
+    @state = STATE[:running]
+    step while @state == STATE[:running]
 
     return @state
   end
@@ -62,7 +62,7 @@ class IntcodeComputer
 
     # HLT
     if @memory[@mem_ptr] % 100 == 99
-      @state = "DONE"
+      @state = STATE[:done]
       return
     end
 
@@ -80,6 +80,8 @@ class IntcodeComputer
     unless @memory[@mem_ptr + 3].nil?
       p3 = decode_parameter(@mem_ptr + 3, @memory[@mem_ptr] / 10_000)
     end
+
+    return if @state == STATE[:crash]
 
     # Opcode
     opcode = @memory[@mem_ptr] % 100
@@ -100,11 +102,11 @@ class IntcodeComputer
     # INP
     when 3
       if @input_queue.empty?
-        @state = "IDLE"
+        @state = STATE[:idle]
       else
         @memory[p1] = @input_queue.shift
         @mem_ptr += 2
-        @state = "RUNNING"
+        @state = STATE[:running]
       end
 
     # OUT
@@ -136,10 +138,10 @@ class IntcodeComputer
       @mem_ptr += 2
 
     else
-      @state = "CRASH"
+      @state = STATE[:crash]
       @error_log = "Invalid opcode: #{opcode} - " \
         "INST_PTR: #{@mem_ptr}:#{@memory[@mem_ptr]} - " \
-        "CYCLE #{cycle}"
+        "CYCLE #{@cycle}"
     end
   end
 
@@ -157,22 +159,16 @@ class IntcodeComputer
 
   private
 
-#  def decode_parameter(p, m)
-#    case m
-#    when 0 then should_return_index ? @memory[@memory[p]] : p
-#    when 1 then @memory[p]
-#    when 2 then should_return_index ? @memory[@rel_base + p] : @rel_base + p
-#    else
-#      #@state = "CRASH"
-#      raise "CRASH - Bad parameter mode: #{m}"
-#    end
-#  end
-
   def decode_parameter(p, m)
     case m
     when 0 then @memory[p]
     when 1 then p
     when 2 then @rel_base + @memory[p]
+    else
+      @state = STATE[:crash]
+      @error_log = "Invalid parameter mode: #{m} - " \
+        "INST_PTR: #{@mem_ptr}:#{@memory[@mem_ptr]} - " \
+        "CYCLE #{@cycle}"
     end
   end
 end
