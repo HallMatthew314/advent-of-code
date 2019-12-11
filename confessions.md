@@ -36,3 +36,16 @@ Below are the problems that I have researched and what I learned from doing so.
 	I changed this to 6 and the output was much more legible, as well as providing the correct solution.
 </details>
 
+<details>
+	<summary>2019 - Day 10 Part 2</summary>
+	I tired looking at a lot of clues for this one, but none of them were able to help me.
+	Out of desperation, I eventually tried changing the index offset to be calculated from `Math::PI` instead of `Math::PI/2`.
+	I found this unusual, since in the standard was of measuring angles in mathematics, 'straight up' or 0 degrees in the puzzle <em>should</em> be equal to half-pi radians.
+	A short while later, I realised my function for calculating angles was incorrect.
+	I was calling the `Math.atan2` method by passing the `x` value before the `y` value.
+	There were two things wrong with this.
+	The first is that `Math.atan2` takes the `y` value <em>before</em> the `x` value.
+	The second was that, because the program exists in a space with an inverted y-axis, the y value needed to be negated for the formula to work.
+	I made these changes and changed the offset angle back to `Math::PI / 2` and it worked.
+</details>
+

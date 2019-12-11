@@ -538,7 +538,7 @@ module AOC2019
     end
 
     angle = ->(a) do
-      Math.atan2(a[0] - origin[0], a[1] - origin[1])
+      Math.atan2(-(a[1] - origin[1]), a[0] - origin[0])
     end
 
     asteroids = []
@@ -564,7 +564,7 @@ module AOC2019
 
     keys = angles.keys.dup.sort
     # I thought this should be PI/2, but it works.
-    start_offset = keys.index(Math::PI)
+    start_offset = keys.index(Math::PI / 2)
     i = start_offset
 
     destroyed = []
