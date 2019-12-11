@@ -529,52 +529,54 @@ module AOC2019
   end
 
   def day10_part2(grid)
-    station = day10_part1(grid)[0].dup
+    origin = day10_part1(grid)[0].dup
     width = grid[0].size
     height = grid.size
-    points = []
 
-    normalize = ->(p) { [p[0] - station[0], p[1] - station[1]] }
-    denormalize = ->(p) { [p[0] + station[0], p[1] + station[1]] }
-    radius = ->(p) { Math.sqrt(p[0]**2 + p[1]**2) }
-
-    angle_from_origin = ->(p) { Math.atan2(p[0], p[1]) }
-
-    # Extract locations of asteroids.
-    (0...height).each do |y|
-      (0...width).each { |x| points.push([x, y]) if grid[y][x] == "#" }
+    radius = ->(a) do
+      Math.sqrt((a[0] - origin[0])**2 + (a[1] - origin[1])**2)
     end
 
-    n_points = (points.map &normalize) - [[0, 0]]
-    puts "TEST - n_points contains origin: #{n_points.include?([0,0])}"
+    angle = ->(a) do
+      Math.atan2(a[0] - origin[0], a[1] - origin[1])
+    end
+
+    asteroids = []
+    (0...height).each do |y|
+      (0...width).each { |x| asteroids.push([x, y]) if grid[y][x] == "#" }
+    end
+
+    asteroids -= [origin]
 
     angles = {}
 
-    n_points.each do |p|
-      a = angle_from_origin.call(p)
-      angles[a] ? angles[a].push(p.dup) : angles[a] = [p.dup]
+    # Make sure there is an array for every angle.
+    # There is likely a better way to do this but
+    # I'm tired of this challenge.
+    angles[Math::PI / 2] = []
+    asteroids.each { |a| angles[angle.call(a)] = [] }
+
+    asteroids.each { |a| angles[angle.call(a)].push(a.dup) }
+
+    angles.values.each do |v|
+      v.sort! { |a, b| radius.call(a) <=> radius.call(b) }
     end
 
-    angles.each_value do |v|
-      v.sort! { |a, b| radius.call(a) <=> radius.call(b) } 
-    end
+    keys = angles.keys.dup.sort
+    # I thought this should be PI/2, but it works.
+    start_offset = keys.index(Math::PI)
+    i = start_offset
 
-    angles[Math::PI / 2] = [] if angles[Math::PI / 2].nil?
-
-    angle_keys = angles.keys.sort
     destroyed = []
-    i = angle_keys.index(Math::PI / 2)
-
     until destroyed.size == 200
-      k = angle_keys[i]
-      destroyed.push(angles[k].shift) unless angles[k].empty?
-      i = (i + 1) % angles.size
+      k = keys[i]
+      a = angles[k].shift
+      destroyed.push(a) unless a.nil?
+      i = (i - 1) % keys.size
     end
 
-    target200 = denormalize.call(destroyed.last)
-    target200[0] * 100 + target200[1]
-
-    destroyed.map &denormalize
+    t = destroyed.last
+    t[0] * 100 + t[1]
   end
 end
 
