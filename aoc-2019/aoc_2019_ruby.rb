@@ -578,5 +578,118 @@ module AOC2019
     t = destroyed.last
     t[0] * 100 + t[1]
   end
+
+  def day11_part1(code)
+    directions = {
+      :east => 0,
+      :north => 1,
+      :west => 2,
+      :south => 3
+    }
+
+    panels = {}
+    panels.default = -1
+    r_location = [0, 0]
+    r_dir = directions[:north]
+    com = IntcodeComputer.new(code)
+
+    turn = ->(t) { r_dir = (r_dir + (t.zero? ? -1 : 1)) % 4 }
+    move = -> do
+      case r_dir
+      when directions[:east]
+        r_location[0] += 1
+      when directions[:north]
+        r_location[1] -= 1
+      when directions[:west]
+        r_location[0] -= 1
+      when directions[:south]
+        r_location[1] += 1
+      else
+        raise "Bad direction"
+      end
+    end
+
+    until com.done?
+      # Is the panel white?
+      c = panels[r_location] > 0 ? 1 : 0
+      com.send_input(c)
+      com.run
+      raise "CRASHED: #{com.error_log}" if com.crash?
+
+      p = com.fetch_output
+      t = com.fetch_output
+
+      panels[r_location] = p
+      turn.call(t)
+      move.call
+    end
+
+    panels.size
+  end
+
+  def day11_part2(code)
+    directions = {
+      :east => 0,
+      :north => 1,
+      :west => 2,
+      :south => 3
+    }
+
+    r_location = [0, 0]
+    r_dir = directions[:north]
+    com = IntcodeComputer.new(code)
+    panels = {}
+    panels.default = -1
+    panels[r_location] = 1
+
+    turn = ->(t) { r_dir = (r_dir + (t.zero? ? -1 : 1)) % 4 }
+    move = -> do
+      case r_dir
+      when directions[:east]
+        r_location[0] += 1
+      when directions[:north]
+        r_location[1] -= 1
+      when directions[:west]
+        r_location[0] -= 1
+      when directions[:south]
+        r_location[1] += 1
+      else
+        raise "Bad direction"
+      end
+    end
+
+    until com.done?
+      # Is the panel white?
+      c = panels[r_location] > 0 ? 1 : 0
+      com.send_input(c)
+      com.run
+      raise "CRASHED: #{com.error_log}" if com.crash?
+
+      p = com.fetch_output
+      t = com.fetch_output
+
+      panels[r_location.dup] = p
+      turn.call(t)
+      move.call
+    end
+
+    min_x = panels.keys.min { |a, b| a[0] <=> b[0] }[0]
+    min_y = panels.keys.min { |a, b| a[1] <=> b[1] }[1]
+    max_x = panels.keys.max { |a, b| a[0] <=> b[0] }[0]
+    max_y = panels.keys.max { |a, b| a[1] <=> b[1] }[1]
+
+    translate = ->(p) { [ p[1] - min_y, p[0] - min_x ] }
+
+    hull = Matrix.build(max_y - min_y + 1, max_x - min_x + 1) { 0 }
+    puts "#{hull.row_size} x #{hull.column_size}"
+    panels.each_pair do |point, color|
+      p = translate.call(point)
+      hull[p[0], p[1]] = color
+    end
+
+    rows = []
+    hull.row_vectors.each { |r| rows << r.to_a.reverse.join }
+    rows.join("\n").gsub(/\d/, {"0" => ".", "1" => "#"})
+  end
 end
 

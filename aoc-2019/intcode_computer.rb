@@ -145,6 +145,26 @@ class IntcodeComputer
     end
   end
 
+  def ready?
+    @state == STATE[:ready]
+  end
+
+  def running?
+    @state == STATE[:running]
+  end
+
+  def idle?
+    @state == STATE[:idle]
+  end
+
+  def crash?
+    @state == STATE[:crash]
+  end
+
+  def done?
+    @state == STATE[:done]
+  end
+
   def view_output
     @output_queue.dup
   end
