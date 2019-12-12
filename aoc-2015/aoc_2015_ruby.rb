@@ -3,6 +3,9 @@
 require "digest"
 require "matrix"
 
+require_relative "graph.rb"
+require_relative "priority_queue.rb"
+
 module AOC2015
 
   module_function
@@ -325,6 +328,23 @@ module AOC2015
     end
 
     strings.map { |s| expanded_size.call(s) - s.size }.sum
+  end
+
+  def day9_part1(paths)
+    path_pattern = /^([A-Z][a-z]+) to ([A-Z][a-z]+) = (\d+)$/
+
+    # Create graph
+    g = Graph.new
+    paths.each do |p|
+      data = p.match(path_pattern).captures
+      v1 = data[0]
+      v2 = data[1]
+      d = data[2].to_i
+
+      g.add_edge(v1, v2, d)
+    end
+
+    # TODO
   end
 end
 

@@ -129,5 +129,15 @@ class TestAOC2015 < Test::Unit::TestCase
       "\"\\x27\""
     ]))
   end
+
+  def test_day9_part1
+    paths = [
+      "London to Dublin = 464",
+      "London to Belfast = 518",
+      "Dublin to Belfast = 141"
+    ]
+
+    assert_equal(605, AOC2015.day9_part1(paths))
+  end
 end
 
