@@ -90,5 +90,36 @@ class TestIntcodeComputer < Test::Unit::TestCase
     com.run
     assert_equal(1125899906842624, com.fetch_output)
   end
+
+  def test_input_array
+    # Accepts two inputs, outputs their sum and halts.
+    code = [3, 0, 3, 1, 1, 0, 1, 0, 4, 0, 99]
+    com = IntcodeComputer.new(code)
+
+    assert_nothing_raised { com.send_input([2, 4]) }
+    com.run
+    assert_equal(6, com.fetch_output)
+  end
+
+  def test_input_alias
+    # Accepts two inputs, outputs their sum and halts.
+    code = [3, 0, 3, 1, 1, 0, 1, 0, 4, 0, 99]
+    com = IntcodeComputer.new(code)
+
+    assert_nothing_raised { com.input([2, 4]) }
+    com.run
+    assert_equal(6, com.fetch_output)
+  end
+
+  def test_bad_program
+    assert_raises(ArgumentError) { IntcodeComputer.new("banana") }
+    assert_raises(ArgumentError) { IntcodeComputer.new([3, 0, 99, "banana"]) }
+    assert_nothing_raised { com = IntcodeComputer.new([3, 0, 99]) }
+    assert_raises(ArgumentError) { com.program = "banana" }
+    assert_raises(ArgumentError) { com.program = [3, 0, "banana", 99] }
+    com = IntcodeComputer.new([3, 0, 99])
+    com.run
+    assert_raises(RuntimeError) { com.program = [104, 69, 99] }
+  end
 end
 

@@ -3,6 +3,8 @@
 # To be updated in accordance with growing specifications.
 class IntcodeComputer
 
+  attr_reader :state, :error_log
+
   STATE = {
     :ready => "READY",
     :running => "RUNNING",
@@ -11,21 +13,14 @@ class IntcodeComputer
     :done => "DONE"
   }
 
-  # Just to be safe
-  MEMORY_CELLS = 1_000_000
-
   def initialize(program)
-    unless program.is_a?(Array)
-      raise ArgumentError, "Program was not an Array"
-    end
-
-    @program = program.dup
-
+    self.program=(program)
     reset
   end
 
   def reset
-    @memory = [0] * MEMORY_CELLS
+    @memory = {}
+    @memory.default = 0
     @program.each_index { |i| @memory[i] = @program[i] }
     @cycle = 0
     @mem_ptr = 0
@@ -40,11 +35,23 @@ class IntcodeComputer
     @output_queue.shift
   end
 
-  # TODO: Allow send Arrays of integers
   def send_input(i)
-    raise ArgumentError, "Inputs must be integers" unless i.is_a?(Integer)
-    @input_queue << i
+    case
+    when i.is_a?(Integer)
+      @input_queue << i
+
+    when i.is_a?(Array)
+      unless i.all? { |e| e.is_a?(Integer) }
+        raise ArgumentError, "Non-Integer element given"
+      end
+      i.each { |e| @input_queue.push(e) }
+
+    else
+      raise ArgumentError, "Inputs must be Integers or Arrays of Integers"
+    end
   end
+
+  alias input send_input
 
   def run(inputs=[])
     raise ArgumentError, "Input was not an Array" unless inputs.is_a?(Array)
@@ -57,7 +64,6 @@ class IntcodeComputer
   end
 
   def step
-
     @cycle += 1
 
     # HLT
@@ -169,12 +175,20 @@ class IntcodeComputer
     @output_queue.dup
   end
 
-  def state
-    @state
-  end
+  def program=(program)
+    if @state == STATE[:idle] || @state == STATE[:running]
+      raise "Program cannot be changed while computation is in progress."
+    end
 
-  def error_log
-    @error_log
+    unless program.is_a?(Array)
+      raise ArgumentError, "Program was not an Array"
+    end
+
+    unless program.all? { |i| i.is_a?(Integer) }
+      raise ArgumentError, "Program Array contained non-integer elements"
+    end
+
+    @program = program.dup
   end
 
   private
