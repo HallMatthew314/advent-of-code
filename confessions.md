@@ -49,3 +49,14 @@ Below are the problems that I have researched and what I learned from doing so.
 	I made these changes and changed the offset angle back to `Math::PI / 2` and it worked.
 </details>
 
+<details>
+	<summary>2019 - Day 12 Part 2</summary>
+	Many people had trouble with this day, myself included.
+	I did not figure out the LCM trick own my own, though my approach before I learned it was along the same lines.
+	I also wondered if my input's answer was simply too large to compute, so I downloaded someone else's solution to see if there was a feasable answer; there was.
+	I eventually figured out the two parts of keeping track of previous states of the axes.
+	The first was to simply compare the first and last elements of the array, leaving the period as the size of the array minus one.
+	The second was to store hashes of the states of positions AND velocities.
+	Overall, I looked up more than I'm proud to admit for this challenge and feel unworthy of its star.
+</details>
+
