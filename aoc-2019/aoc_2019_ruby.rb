@@ -691,5 +691,148 @@ module AOC2019
     hull.row_vectors.each { |r| rows << r.to_a.reverse.join }
     rows.join("\n").gsub(/\d/, {"0" => ".", "1" => "#"})
   end
+
+  def day12_part1(moon_data, steps=1000)
+    moons = Matrix.zero(4, 3)
+    moon_vels = Matrix.zero(4, 3)
+
+    moon_data.each_index do |r|
+      pos = moon_data[r].scan(/-?\d+/).map { |i| i.to_i }
+      pos.each_index { |c| moons[r, c] = pos[c] }
+    end
+
+    diff = ->(a, b) do
+      case
+      when a > b then -1
+      when a < b then 1
+      else 0
+      end
+    end
+
+    abs_sum = ->(v) { v.map { |i| i.abs }.sum }
+
+    steps.times do
+      # Calculate velocities.
+      moons.each_with_index do |e, r, c|
+        moon_vels[r, c] += moons.column(c).map { |i| diff.call(e, i) }.sum
+      end
+
+      # Apply velocities.
+      moons += moon_vels
+    end
+
+    energy = 0
+
+    moon_data.each_index do |r|
+      energy += abs_sum.call(moons.row(r)) * abs_sum.call(moon_vels.row(r))
+    end
+
+    energy
+  end
+
+  def day12_part2(moon_data)
+    moons = Matrix.zero(4, 3)
+    moon_vels = Matrix.zero(4, 3)
+
+    history = {}
+
+    moon_data.each_index do |r|
+      pos = moon_data[r].scan(/-?\d+/).map { |i| i.to_i }
+      pos.each_index { |c| moons[r, c] = pos[c] }
+    end
+
+    diff = ->(a, b) do
+      case
+      when a > b then -1
+      when a < b then 1
+      else 0
+      end
+    end
+
+    abs_sum = ->(v) { v.map { |i| i.abs }.sum }
+    hash = ->(a, b) { "#{a.hash}#{b.hash}" }
+
+    steps = 0
+
+    until history[hash.call(moons, moon_vels)]
+      # Update history
+      history[hash.call(moons, moon_vels)] = true
+
+      # Calculate velocities.
+      moons.each_with_index do |e, r, c|
+        moon_vels[r, c] += moons.column(c).map { |i| diff.call(e, i) }.sum
+      end
+
+      # Apply velocities.
+      moons += moon_vels
+    end
+    history.size# - 1
+  end
+
+  def day12_part2(moon_data)
+    moons = Matrix.zero(4, 3)
+    moon_vels = Matrix.zero(4, 3)
+
+    moon_data.each_index do |r|
+      pos = moon_data[r].scan(/-?\d+/).map { |i| i.to_i }
+      pos.each_index { |c| moons[r, c] = pos[c] }
+    end
+
+    diff = ->(a, b) do
+      case
+      when a > b then -1
+      when a < b then 1
+      else 0
+      end
+    end
+
+    cycle = ->(a) { a.size > 1 && a.first == a.last }
+    hash = ->(a, b) { "#{a.hash}#{b.hash}" }
+
+
+    # OPTIMIZE
+    # This can probably be parallelized.
+    xs = []
+    ys = []
+    zs = []
+
+    cycle_xs = false
+    cycle_ys = false
+    cycle_zs = false
+
+    step = 0
+    until cycle_xs && cycle_ys && cycle_zs
+      step += 1
+      if step % 50_000 == 0
+        puts "------\n#{step}"
+        puts "x - #{cycle_xs}"
+        puts "y - #{cycle_ys}"
+        puts "z - #{cycle_zs}"
+      end
+
+      moons.each_with_index do |e, r, c|
+        moon_vels[r, c] += moons.column(c).map { |i| diff.call(e, i) }.sum
+      end
+
+      moons += moon_vels
+
+      cycle_xs = cycle.call(xs)
+      cycle_ys = cycle.call(ys)
+      cycle_zs = cycle.call(zs)
+
+      xs.push(hash.call(moons.column(0), moon_vels.column(0))) unless cycle_xs
+      ys.push(hash.call(moons.column(1), moon_vels.column(1))) unless cycle_ys
+      zs.push(hash.call(moons.column(2), moon_vels.column(2))) unless cycle_zs
+    end
+
+    orbits = [
+      (xs.size - 1),
+      (ys.size - 1),
+      (zs.size - 1)
+    ]
+
+    #puts orbits.to_s
+    orbits.reduce(1, :lcm)
+  end
 end
 
