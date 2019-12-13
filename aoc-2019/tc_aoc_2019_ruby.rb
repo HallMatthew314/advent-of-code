@@ -146,5 +146,7 @@ class TestAOC2019 < Test::Unit::TestCase
 
     assert_equal(2772, AOC2019.day12_part2(data))
   end
+
+  # No examples for Day 13
 end
 

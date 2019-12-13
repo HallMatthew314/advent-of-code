@@ -831,5 +831,51 @@ module AOC2019
     #puts orbits.to_s
     orbits.reduce(1, :lcm)
   end
+
+  def day13_part1(code)
+    com = IntcodeComputer.new(code)
+    screen = {}
+
+    com.run
+    while com.any_output?
+      x = com.fetch_output
+      y = com.fetch_output
+      screen[[x, y]] = com.fetch_output
+    end
+
+    screen.values.count(2)
+  end
+
+  def day13_part2(code)
+    code[0] = 2
+    com = IntcodeComputer.new(code)
+    screen = {}
+    score = 0
+
+    until com.done?
+      com.run
+
+      while com.any_output?
+        x = com.fetch_output
+        y = com.fetch_output
+        v = com.fetch_output
+        x == -1 && y == 0 ? score = v : screen[[x, y]] = v
+      end
+
+      paddle = screen.key(3).dup
+      ball = screen.key(4).dup
+
+      joystick_input =
+        case
+        when paddle[0] > ball[0] then -1
+        when paddle[0] < ball[0] then 1
+        else 0
+        end
+
+      com.send_input(joystick_input)
+    end
+
+    score
+  end
 end
 

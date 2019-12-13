@@ -171,6 +171,10 @@ class IntcodeComputer
     @state == STATE[:done]
   end
 
+  def any_output?
+    !@output_queue.empty?
+  end
+
   def view_output
     @output_queue.dup
   end
