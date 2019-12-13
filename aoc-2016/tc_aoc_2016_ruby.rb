@@ -33,5 +33,17 @@ class TestAOC2016 < Test::Unit::TestCase
       "UUUUD"
     ]))
   end
+
+  def test_day3
+    assert_equal(0, AOC2016.day3_part1(["5 10 25"]))
+    assert_equal(6, AOC2016.day3_part2([
+      "101 301 501",
+      "102 302 502",
+      "103 303 503",
+      "201 401 601",
+      "202 402 602",
+      "203 403 603"
+    ]))
+  end
 end
 

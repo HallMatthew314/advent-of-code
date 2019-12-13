@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require "matrix"
+
 module AOC2016
 
   module_function
@@ -149,6 +151,31 @@ module AOC2016
     end
 
     final_code.join
+  end
+
+  def day3_part1(triangles)
+    triangles.map! { |t| t.scan(/\d+/).map { |i| i.to_i }.sort }
+
+    valid = ->(t) { t[0] + t[1] > t[2] }
+
+    (triangles.filter &valid).size
+  end
+
+  def day3_part2(triangles)
+    triangles.map! { |t| t.scan(/\d+/).map { |i| i.to_i } }
+    valid = ->(t) { t[0] + t[1] > t[2] }
+
+    count = triangles.size
+    mat = Matrix.rows(triangles).t
+    real_triangles = []
+
+    mat.row_vectors.each do |row|
+      (0...mat.column_size).step(3) do |i|
+        real_triangles.push(row[i..i + 2].sort)
+      end
+    end
+
+    (real_triangles.filter &valid).size
   end
 end
 
