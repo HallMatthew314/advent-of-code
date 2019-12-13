@@ -789,9 +789,6 @@ module AOC2019
     cycle = ->(a) { a.size > 1 && a.first == a.last }
     hash = ->(a, b) { "#{a.hash}#{b.hash}" }
 
-
-    # OPTIMIZE
-    # This can probably be parallelized.
     xs = []
     ys = []
     zs = []
