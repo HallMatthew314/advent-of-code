@@ -21,19 +21,17 @@ def day3(path)
   puts "Part 2: #{AOC2016.day3_part2(triangles.dup)}"
 end
 
-# Methods below this comment are copied from the 2019 file
-
 def day4(path)
-  range = File.read(path || "day4_input.txt").strip
-  puts "Part 1: #{AOC2016.day4_part1(range)}"
-  puts "Part 2: #{AOC2016.day4_part2(range)}"
+  rooms = File.readlines(path || "day4_input.txt").map { |l| l.strip }
+  puts "Part 1: #{AOC2016.day4_part1(rooms)}"
+  puts "Part 2: #{AOC2016.day4_part2(rooms)}"
 end
 
 case ARGV[0].to_i
 when 1 then day1(ARGV[1])
 when 2 then day2(ARGV[1])
 when 3 then day3(ARGV[1])
-#when 4 then day4(ARGV[1])
+when 4 then day4(ARGV[1])
 else puts "Please supply a day to run: ./input_answers.rb <DAY NUMBER> (INPUT PATH)"
 end
 

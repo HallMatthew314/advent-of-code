@@ -177,5 +177,48 @@ module AOC2016
 
     (real_triangles.filter &valid).size
   end
+
+  def day4_part1(rooms)
+    p_room = /(\d+)\[(.{5})\]/
+
+    chksum = ->(str) do
+      tally = Hash.new(0)
+      str.chars.each { |c| tally[c] += 1 }
+
+      counts = {}
+      tally.values.each { |k| counts[k] = [] }
+      tally.each { |k, v| counts[v].push(k) }
+
+      counts.each_value { |v| v.sort! }
+      counts.to_a.sort { |a, b| b[0] <=> a[0] }
+        .map { |c| c[1] }.flatten.first(5).join
+    end
+
+    id_total = 0
+
+    rooms.each do |room|
+      name = room.split("-")
+      id, sum = name.pop.match(p_room).captures
+
+      id_total += id.to_i if sum == chksum.call(name.join)
+    end
+
+    id_total
+  end
+
+  def day4_part2(rooms)
+    new_letter = ->(l, offset) do
+      l == "-" ? " " : ((l.ord - 97 + offset) % 26 + 97).chr
+    end
+
+    decrypt = ->(room) do
+      name = room.split("-")
+      o = name.pop.scan(/\d+/).first.to_i
+
+      [name.join("-").chars.map { |c| new_letter.call(c, o) }.join, o]
+    end
+
+    (rooms.map &decrypt).filter { |r| r[0] =~ /north|pole|object/ }
+  end
 end
 

@@ -45,5 +45,16 @@ class TestAOC2016 < Test::Unit::TestCase
       "203 403 603"
     ]))
   end
+
+  def test_day4
+    rooms = [
+      "aaaaa-bbb-z-y-x-123[abxyz]",
+      "a-b-c-d-e-f-g-h-987[abcde]",
+      "not-a-real-room-404[oarel]",
+      "totally-real-room-200[decoy]"
+    ]
+
+    assert_equal(1514, AOC2016.day4_part1(rooms))
+  end
 end
 
