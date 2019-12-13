@@ -249,5 +249,31 @@ module AOC2016
 
     password.join
   end
+
+  def day6_part1(lines)
+    mat = Matrix.rows(lines.map { |l| l.chars })
+
+    tallies = []
+    mat.column_size.times { tallies.push(Hash.new(0)) }
+
+    mat.each_with_index do |e, _, c|
+      tallies[c][e] += 1
+    end
+
+    tallies.map { |t| t.key(t.values.max) }.join
+  end
+
+  def day6_part2(lines)
+    mat = Matrix.rows(lines.map { |l| l.chars })
+
+    tallies = []
+    mat.column_size.times { tallies.push(Hash.new(0)) }
+
+    mat.each_with_index do |e, _, c|
+      tallies[c][e] += 1
+    end
+
+    tallies.map { |t| t.key(t.values.min) }.join
+  end
 end
 

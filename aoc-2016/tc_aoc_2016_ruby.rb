@@ -58,5 +58,29 @@ class TestAOC2016 < Test::Unit::TestCase
   end
 
   # Day 5 takes too long to have tests.
+
+  def test_day6_part2
+    lines = [
+      "eedadn",
+      "drvtee",
+      "eandsr",
+      "raavrd",
+      "atevrs",
+      "tsrnev",
+      "sdttsa",
+      "rasrtv",
+      "nssdts",
+      "ntnada",
+      "svetve",
+      "tesnvt",
+      "vntsnd",
+      "vrdear",
+      "dvrsen",
+      "enarar"
+    ]
+
+    assert_equal("easter", AOC2016.day6_part1(lines))
+    assert_equal("advent", AOC2016.day6_part2(lines))
+  end
 end
 
