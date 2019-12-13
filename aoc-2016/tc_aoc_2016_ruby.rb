@@ -56,5 +56,7 @@ class TestAOC2016 < Test::Unit::TestCase
 
     assert_equal(1514, AOC2016.day4_part1(rooms))
   end
+
+  # Day 5 takes too long to have tests.
 end
 

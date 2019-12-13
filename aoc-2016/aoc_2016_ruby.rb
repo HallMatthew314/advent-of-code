@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+require "digest"
 require "matrix"
 
 module AOC2016
@@ -219,6 +220,34 @@ module AOC2016
     end
 
     (rooms.map &decrypt).filter { |r| r[0] =~ /north|pole|object/ }
+  end
+
+  def day5_part1(id)
+    password = []
+    i = 0
+    while password.size < 8
+      h = Digest::MD5.hexdigest("#{id}#{i}")
+      puts password.push(h[5]).join if h[0..4] == "00000"
+      i += 1
+    end
+
+    password.join
+  end
+
+  def day5_part2(id)
+    password = ["*"] * 8
+    i = 0
+    puts password.join
+    while password.any?("*")
+      h = Digest::MD5.hexdigest("#{id}#{i}")
+      if h[0..4] == "00000" && h[5] =~ /[0-7]/ && password[h[5].to_i] == "*"
+        password[h[5].to_i] = h[6]
+        puts password.join
+      end
+      i += 1
+    end
+
+    password.join
   end
 end
 
