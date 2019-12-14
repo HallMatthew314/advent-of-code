@@ -275,5 +275,26 @@ module AOC2016
 
     tallies.map { |t| t.key(t.values.min) }.join
   end
+
+  def day7_part1(addrs)
+    # REVIEW: This may be possible via capturing a negative lookahead
+    # containing a backref to the first capture group.
+
+    abba = ->(s) do
+      c = s.scan(/(.)(.)\2\1/)
+      c.any? { |p| p[0] != p[1] }
+    end
+
+    tls = ->(s) do
+      b = s.scan(/\[[a-z]+\]/)
+      !(b.any? &abba) && abba.call(s)
+    end
+
+    addrs.count &tls
+  end
+
+  def day7_part2(addrs)
+    nil
+  end
 end
 

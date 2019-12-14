@@ -59,7 +59,7 @@ class TestAOC2016 < Test::Unit::TestCase
 
   # Day 5 takes too long to have tests.
 
-  def test_day6_part2
+  def test_day6
     lines = [
       "eedadn",
       "drvtee",
@@ -81,6 +81,17 @@ class TestAOC2016 < Test::Unit::TestCase
 
     assert_equal("easter", AOC2016.day6_part1(lines))
     assert_equal("advent", AOC2016.day6_part2(lines))
+  end
+
+  def test_day7_part1
+    addrs = [
+      "abba[mnop]qrst",
+      "abcd[bddb]xyyx",
+      "aaaa[qwer]tyui",
+      "ioxxoj[asdfgh]zxcvbn"
+    ]
+
+    assert_equal(2, AOC2016.day7_part1(addrs))
   end
 end
 
