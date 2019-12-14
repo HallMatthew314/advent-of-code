@@ -60,3 +60,12 @@ Below are the problems that I have researched and what I learned from doing so.
 	Overall, I looked up more than I'm proud to admit for this challenge and feel unworthy of its star.
 </details>
 
+<details>
+	<summary>2019 Day 14</summary>
+	GG.
+
+	When I first saw this problem, I had no idea how to approach it.
+	Almost two hours later I was still clueless.
+	It was at this point I suspected I had been defeated.
+</details>
+
