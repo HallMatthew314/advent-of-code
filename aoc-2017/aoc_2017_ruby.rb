@@ -167,5 +167,23 @@ module AOC2017
       n += 2
     end
   end
+
+  def day4_part1(passes)
+    valid = ->(p) do
+      words = p.split(" ")
+      words == words.uniq
+    end
+
+    passes.count &valid
+  end
+
+  def day4_part2(passes)
+    valid = ->(p) do
+      words = p.split(" ").map { |w| w.chars.sort.join }
+      words == words.uniq
+    end
+
+    passes.count &valid
+  end
 end
 

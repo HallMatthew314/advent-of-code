@@ -28,5 +28,27 @@ class TestAOC2017 < Test::Unit::TestCase
     assert_equal(2, AOC2017.day3_part1(23))
     assert_equal(31, AOC2017.day3_part1(1024))
   end
+
+  def test_day4_part1
+    passes = [
+      "aa bb cc dd ee",
+      "aa bb cc dd aa",
+      "aa bb cc dd aaa"
+    ]
+
+    assert_equal(2, AOC2017.day4_part1(passes))
+  end
+
+  def test_day4_part2
+    passes = [
+      "abcde fghij",
+      "abcde xyz ecdab",
+      "a ab abc abd abf abj",
+      "iiii oiii ooii oooi oooo",
+      "oiii ioii iioi iiio"
+    ]
+
+    assert_equal(3, AOC2017.day4_part2(passes))
+  end
 end
 
