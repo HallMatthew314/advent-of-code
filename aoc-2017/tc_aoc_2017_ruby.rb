@@ -21,5 +21,12 @@ class TestAOC2017 < Test::Unit::TestCase
     assert_equal(12, AOC2017.day1_part2("123123"))
     assert_equal(4, AOC2017.day1_part2("12131415"))
   end
+
+  def test_day3_part1
+    assert_equal(0, AOC2017.day3_part1(1))
+    assert_equal(3, AOC2017.day3_part1(12))
+    assert_equal(2, AOC2017.day3_part1(23))
+    assert_equal(31, AOC2017.day3_part1(1024))
+  end
 end
 
