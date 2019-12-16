@@ -52,16 +52,17 @@ class TestAOC2017 < Test::Unit::TestCase
   end
 
   def test_day5
-    jumps = [
-      0,
-      3,
-      0,
-      1,
-      -3
-    ]
+    jumps = [0, 3, 0, 1, -3]
 
     assert_equal(5, AOC2017.day5_part1(jumps.dup))
     assert_equal(10, AOC2017.day5_part2(jumps.dup))
+  end
+
+  def test_day6
+    blocks = [0, 2, 7, 0]
+
+    assert_equal(5, AOC2017.day6_part1(blocks.dup))
+    assert_equal(4, AOC2017.day6_part2(blocks.dup))
   end
 end
 

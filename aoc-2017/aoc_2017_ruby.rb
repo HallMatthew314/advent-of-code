@@ -217,5 +217,48 @@ module AOC2017
 
     steps
   end
+
+  def day6_part1(blocks)
+    states = {}
+    cycles = 0
+
+    until states[blocks.hash]
+      cycles += 1
+      states[blocks.hash] = true
+
+      index = blocks.index(blocks.max)
+      new_blocks = blocks[index]
+      blocks[index] = 0
+
+      until new_blocks == 0
+        index = index.next % blocks.size
+        blocks[index] += 1
+        new_blocks -= 1
+      end
+    end
+
+    cycles
+  end
+
+  def day6_part2(blocks)
+    history = []
+
+    while history == history.uniq
+      history.push(blocks.hash)
+
+      index = blocks.index(blocks.max)
+      new_blocks = blocks[index]
+      blocks[index] = 0
+
+      until new_blocks == 0
+        index = index.next % blocks.size
+        blocks[index] += 1
+        new_blocks -= 1
+      end
+    end
+
+    # Index of second occurence minus index of first occurence.
+    history.size - history.index(blocks.hash)
+  end
 end
 
