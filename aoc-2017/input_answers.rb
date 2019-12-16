@@ -9,8 +9,15 @@ def day1(path)
   puts "Part 2: #{AOC2017.day1_part2(captcha)}"
 end
 
+def day2(path)
+  rows = File.readlines(path || "day2_input.txt").map { |l| l.strip }
+  puts "Part 1: #{AOC2017.day2_part1(rows)}"
+  puts "Part 2: #{AOC2017.day2_part2(rows)}"
+end
+
 case ARGV[0].to_i
 when 1 then day1(ARGV[1])
+when 2 then day2(ARGV[1])
 else puts "Please supply a day to run: ./input_answers.rb <DAY NUMBER> (INPUT PATH)"
 end
 

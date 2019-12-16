@@ -24,5 +24,27 @@ module AOC2017
 
     total
   end
+
+  def day2_part1(rows)
+    chkrow = ->(r) do
+      ints = r.scan(/\d+/).map { |i| i.to_i }
+      ints.max - ints.min
+    end
+
+    (rows.map &chkrow).sum
+  end
+
+  def day2_part2(rows)
+    # HACK: Probably a nicer way to do this.
+    divrow = ->(r) do
+      ints = r.scan(/\d+/).map { |i| i.to_i }.sort
+      until ints.empty?
+        l = ints.shift
+        ints.each { |i| return i / l if i % l == 0 }
+      end
+    end
+
+    (rows.map &divrow).sum
+  end
 end
 
