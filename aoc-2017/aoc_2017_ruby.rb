@@ -185,5 +185,37 @@ module AOC2017
 
     passes.count &valid
   end
+
+  def day5_part1(jumps)
+    steps = 0
+    ptr = 0
+
+    until ptr >= jumps.size || ptr < 0
+      steps += 1
+      jumps[ptr] += 1
+      ptr += jumps[ptr] - 1
+    end
+
+    steps
+  end
+
+  def day5_part2(jumps)
+    steps = 0
+    ptr = 0
+
+    until ptr >= jumps.size || ptr < 0
+      steps += 1
+
+      if jumps[ptr] > 2
+        jumps[ptr] -= 1
+        ptr += jumps[ptr] + 1
+      else
+        jumps[ptr] += 1
+        ptr += jumps[ptr] - 1
+      end
+    end
+
+    steps
+  end
 end
 
