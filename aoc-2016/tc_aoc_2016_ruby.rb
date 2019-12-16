@@ -93,5 +93,16 @@ class TestAOC2016 < Test::Unit::TestCase
 
     assert_equal(2, AOC2016.day7_part1(addrs))
   end
+
+  def test_day7_part2
+    addrs = [
+      "aba[bab]xyz", # yes
+      "xyx[xyx]xyx", # no
+      "aaa[kek]eke", # yes
+      "zazbz[bzb]cdb" # yes
+    ]
+
+    assert_equal(3, AOC2016.day7_part2(addrs))
+  end
 end
 

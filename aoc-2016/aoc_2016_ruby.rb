@@ -293,8 +293,33 @@ module AOC2016
     addrs.count &tls
   end
 
+  # TODO
   def day7_part2(addrs)
-    nil
+
+    aba = ->(s, b, a) do
+      s =~ /#{a}#{b}#{a}/
+    end
+
+    bab = ->(s) do
+      c = s.scan(/(.)(.)\1/)
+    end
+
+    ssl = ->(addr) do
+      brackets = addr.scan(/\[[a-z]+\]/)
+      (brackets.map! &bab).reject! { |i| i.nil? }
+
+      groups = addr.split(/[\[\]]/)
+      outer = []
+      (0...groups.size).each { |i| outer.push(groups[i]) if i.even? }
+
+      outer.each do |g|
+        brackets.each { |b| return true if aba.call(g, b[0], b[1]) }
+      end
+
+      false
+    end
+
+    addrs.count &ssl
   end
 end
 
