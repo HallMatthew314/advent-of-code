@@ -64,5 +64,25 @@ class TestAOC2017 < Test::Unit::TestCase
     assert_equal(5, AOC2017.day6_part1(blocks.dup))
     assert_equal(4, AOC2017.day6_part2(blocks.dup))
   end
+
+  def test_day7
+    nodes = [
+      "pbga (66)",
+      "xhth (57)",
+      "ebii (61)",
+      "havc (66)",
+      "ktlj (57)",
+      "fwft (72) -> ktlj, cntj, xhth",
+      "qoyq (66)",
+      "padx (45) -> pbga, havc, qoyq",
+      "tknk (41) -> ugml, padx, fwft",
+      "jptl (61)",
+      "ugml (68) -> gyxo, ebii, jptl",
+      "gyxo (61)",
+      "cntj (57)"
+    ]
+
+    assert_equal("tknk", AOC2017.day7_part1(nodes.dup))
+  end
 end
 

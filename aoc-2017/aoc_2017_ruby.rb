@@ -260,5 +260,26 @@ module AOC2017
     # Index of second occurence minus index of first occurence.
     history.size - history.index(blocks.hash)
   end
+
+  def day7_part1(nodes)
+    parent_of = {}
+
+    nodes.each do |n|
+      if n =~ /->/
+        # Extract child nodes
+        children = n.split("->").last.strip.split(", ")
+        children.each { |c| parent_of[c] = n.split(" ").first }
+      end
+    end
+
+    # Start with any node and walk up the tree.
+    walker = parent_of.keys.first
+    walker = parent_of[walker] until parent_of[walker].nil?
+    walker
+  end
+
+  def day7_part2(nodes)
+    nil
+  end
 end
 
