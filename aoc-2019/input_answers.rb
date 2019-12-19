@@ -79,8 +79,14 @@ end
 
 def day13(path)
   c = File.read(path || "day13_input.txt").strip.split(",").map { |o| o.to_i }
-  puts "Part 1 #{AOC2019.day13_part1(c.dup)}"
-  puts "Part 2 #{AOC2019.day13_part2(c.dup)}"
+  puts "Part 1: #{AOC2019.day13_part1(c.dup)}"
+  puts "Part 2: #{AOC2019.day13_part2(c.dup)}"
+end
+
+def day19(path)
+  c = File.read(path || "day19_input.txt").strip.split(",").map { |o| o.to_i }
+  puts "Part 1: #{AOC2019.day19_part1(c.dup)}"
+  puts "Part 2: #{AOC2019.day19_part2(c.dup)}"
 end
 
 case ARGV[0].to_i
@@ -97,6 +103,7 @@ when 10 then day10(ARGV[1])
 when 11 then day11(ARGV[1])
 when 12 then day12(ARGV[1])
 when 13 then day13(ARGV[1])
+when 19 then day19(ARGV[1])
 else puts "Please supply a day to run: ./input_answers.rb <DAY NUMBER> (INPUT PATH)"
 end
 

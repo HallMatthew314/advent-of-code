@@ -877,5 +877,46 @@ module AOC2019
 
     score
   end
+
+  def day19_part1(code)
+    com = IntcodeComputer.new(code)
+
+    coords = []
+    (0..49).each do |y|
+      (0..49).each { |x| coords.push([x, y]) }
+    end
+
+    coords.map do |c|
+      com.send_input(c)
+      com.run
+      out = com.fetch_output
+      com.reset
+      out
+    end.count(1)
+  end
+
+  def day19_part2(code)
+    com = IntcodeComputer.new(code)
+
+    in_beam = ->(x, y) do
+      com.reset
+      com.send_input([x, y])
+      com.run
+      com.fetch_output == 1
+    end
+
+    cx = 0
+    cy = 0
+
+    loop do
+      top_right = in_beam.call(cx + 99, cy)
+      bottom_left = in_beam.call(cx, cy + 99)
+
+      return cx * 10_000 + cy if top_right && bottom_left
+
+      cx += 1 unless bottom_left
+      cy += 1 unless top_right
+    end
+  end
 end
 
