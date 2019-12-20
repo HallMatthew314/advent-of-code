@@ -10,7 +10,7 @@ def day1(path)
 end
 
 def day2(path)
-  dimensions = File.readlines(path || "day2_input.txt").map { |l| l.strip }
+  dimensions = File.readlines(path || "day2_input.txt").map(&:strip)
   puts "Part 1: #{AOC2015.day2_part1(dimensions)}"
   puts "Part 2: #{AOC2015.day2_part2(dimensions)}"
 end
@@ -28,25 +28,25 @@ def day4(path)
 end
 
 def day5(path)
-  strings = File.readlines(path || "day5_input.txt").map { |l| l.strip }
+  strings = File.readlines(path || "day5_input.txt").map(&:strip)
   puts "Part 1: #{AOC2015.day5_part1(strings)}"
   puts "Part 2: #{AOC2015.day5_part2(strings)}"
 end
 
 def day6(path)
-  instructions = File.readlines(path || "day6_input.txt").map { |l| l.strip }
+  instructions = File.readlines(path || "day6_input.txt").map(&:strip)
   puts "Part 1: #{AOC2015.day6_part1(instructions)}"
   puts "Part 2: #{AOC2015.day6_part2(instructions)}"
 end
 
 def day7(path)
-  circuit = File.readlines(path || "day7_input.txt").map { |l| l.strip }
+  circuit = File.readlines(path || "day7_input.txt").map(&:strip)
   puts "Part 1: #{AOC2015.day7_part1(circuit)}"
   puts "Part 2: #{AOC2015.day7_part2(circuit)}"
 end
 
 def day8(path)
-  strings = File.readlines(path || "day8_input.txt").map { |l| l.strip }
+  strings = File.readlines(path || "day8_input.txt").map(&:strip)
   puts "Part 1: #{AOC2015.day8_part1(strings)}"
   puts "Part 2: #{AOC2015.day8_part2(strings)}"
 end

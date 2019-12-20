@@ -4,13 +4,13 @@
 require_relative "aoc_2019_ruby.rb"
 
 def day1(path)
-  masses = File.readlines(path || "day1_input.txt").map { |l| l.strip }
+  masses = File.readlines(path || "day1_input.txt").map(&:strip)
   puts "Part 1: #{AOC2019.day1_part1(masses)}"
   puts "Part 2: #{AOC2019.day1_part2(masses)}"
 end
 
 def day2(path)
-  c = File.read(path || "day2_input.txt").strip.split(",").map { |o| o.to_i }
+  c = File.read(path || "day2_input.txt").strip.split(",").map(&:to_i)
   puts "Part 1: #{AOC2019.day2_part1(c.dup, 12, 2)}"
   puts "Part 2: #{AOC2019.day2_part2(c.dup, 19690720)}"
 end
@@ -30,19 +30,19 @@ def day4(path)
 end
 
 def day5(path)
-  c = File.read(path || "day5_input.txt").strip.split(",").map { |o| o.to_i }
+  c = File.read(path || "day5_input.txt").strip.split(",").map(&:to_i)
   puts "Part 1: #{AOC2019.day5_part1(c.dup, 1)}"
   puts "Part 2: #{AOC2019.day5_part2(c.dup, 5)}"
 end
 
 def day6(path)
-  orbit_map = File.readlines(path || "day6_input.txt").map { |l| l.strip }
+  orbit_map = File.readlines(path || "day6_input.txt").map(&:strip)
   puts "Part 1: #{AOC2019.day6_part1(orbit_map)}"
   puts "Part 2: #{AOC2019.day6_part2(orbit_map)}"
 end
 
 def day7(path)
-  c = File.read(path || "day7_input.txt").strip.split(",").map { |o| o.to_i }
+  c = File.read(path || "day7_input.txt").strip.split(",").map(&:to_i)
   puts "Part 1: #{AOC2019.day7_part1(c)}"
   puts "Part 2: #{AOC2019.day7_part2(c)}"
 end
@@ -54,37 +54,37 @@ def day8(path)
 end
 
 def day9(path)
-  c = File.read(path || "day9_input.txt").strip.split(",").map { |o| o.to_i }
+  c = File.read(path || "day9_input.txt").strip.split(",").map(&:to_i)
   puts "Part 1: #{AOC2019.day9_part1(c)}"
   puts "Part 2: #{AOC2019.day9_part2(c)}"
 end
 
 def day10(path)
-  grid = File.readlines(path || "day10_input.txt").map { |l| l.strip }
+  grid = File.readlines(path || "day10_input.txt").map(&:strip)
   puts "Part 1: #{AOC2019.day10_part1(grid)}"
   puts "Part 2: #{AOC2019.day10_part2(grid)}"
 end
 
 def day11(path)
-  c = File.read(path || "day11_input.txt").strip.split(",").map { |o| o.to_i }
+  c = File.read(path || "day11_input.txt").strip.split(",").map(&:to_i)
   puts "Part 1: #{AOC2019.day11_part1(c)}"
   puts "Part 2:\n#{AOC2019.day11_part2(c)}"
 end
 
 def day12(path)
-  moons = File.readlines(path || "day12_input.txt").map { |l| l.strip }
+  moons = File.readlines(path || "day12_input.txt").map(&:strip)
   puts "Part 1: #{AOC2019.day12_part1(moons)}"
   puts "Part 2: #{AOC2019.day12_part2(moons)}"
 end
 
 def day13(path)
-  c = File.read(path || "day13_input.txt").strip.split(",").map { |o| o.to_i }
+  c = File.read(path || "day13_input.txt").strip.split(",").map(&:to_i)
   puts "Part 1: #{AOC2019.day13_part1(c.dup)}"
   puts "Part 2: #{AOC2019.day13_part2(c.dup)}"
 end
 
 def day19(path)
-  c = File.read(path || "day19_input.txt").strip.split(",").map { |o| o.to_i }
+  c = File.read(path || "day19_input.txt").strip.split(",").map(&:to_i)
   puts "Part 1: #{AOC2019.day19_part1(c.dup)}"
   puts "Part 2: #{AOC2019.day19_part2(c.dup)}"
 end

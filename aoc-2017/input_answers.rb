@@ -10,7 +10,7 @@ def day1(path)
 end
 
 def day2(path)
-  rows = File.readlines(path || "day2_input.txt").map { |l| l.strip }
+  rows = File.readlines(path || "day2_input.txt").map(&:strip)
   puts "Part 1: #{AOC2017.day2_part1(rows)}"
   puts "Part 2: #{AOC2017.day2_part2(rows)}"
 end
@@ -22,25 +22,25 @@ def day3(path)
 end
 
 def day4(path)
-  passes = File.readlines(path || "day4_input.txt").map { |l| l.strip }
+  passes = File.readlines(path || "day4_input.txt").map(&:strip)
   puts "Part 1: #{AOC2017.day4_part1(passes)}"
   puts "Part 2: #{AOC2017.day4_part2(passes)}"
 end
 
 def day5(path)
-  jumps = File.read(path || "day5_input.txt").split(/\s+/).map { |i| i.to_i }
+  jumps = File.read(path || "day5_input.txt").split(/\s+/).map(&:to_i)
   puts "Part 1: #{AOC2017.day5_part1(jumps.dup)}"
   puts "Part 2: #{AOC2017.day5_part2(jumps.dup)}"
 end
 
 def day6(path)
-  blocks = File.read(path || "day6_input.txt").split(/\s+/).map { |i| i.to_i }
+  blocks = File.read(path || "day6_input.txt").split(/\s+/).map(&:to_i)
   puts "Part 1: #{AOC2017.day6_part1(blocks.dup)}"
   puts "Part 2: #{AOC2017.day6_part2(blocks.dup)}"
 end
 
 def day7(path)
-  nodes = File.readlines(path || "day7_input.txt").map { |l| l.strip }
+  nodes = File.readlines(path || "day7_input.txt").map(&:strip)
   puts "Part 1: #{AOC2017.day7_part1(nodes.dup)}"
   puts "Part 2: #{AOC2017.day7_part2(nodes.dup)}"
 end

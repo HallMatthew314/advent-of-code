@@ -10,19 +10,19 @@ def day1(path)
 end
 
 def day2(path)
-  code = File.readlines(path || "day2_input.txt").map { |l| l.strip }
+  code = File.readlines(path || "day2_input.txt").map(&:strip)
   puts "Part 1: #{AOC2016.day2_part1(code)}"
   puts "Part 2: #{AOC2016.day2_part2(code)}"
 end
 
 def day3(path)
-  triangles = File.readlines(path || "day3_input.txt").map { |l| l.strip }
+  triangles = File.readlines(path || "day3_input.txt").map(&:strip)
   puts "Part 1: #{AOC2016.day3_part1(triangles.dup)}"
   puts "Part 2: #{AOC2016.day3_part2(triangles.dup)}"
 end
 
 def day4(path)
-  rooms = File.readlines(path || "day4_input.txt").map { |l| l.strip }
+  rooms = File.readlines(path || "day4_input.txt").map(&:strip)
   puts "Part 1: #{AOC2016.day4_part1(rooms)}"
   puts "Part 2: #{AOC2016.day4_part2(rooms)}"
 end
@@ -34,13 +34,13 @@ def day5(path)
 end
 
 def day6(path)
-  lines = File.readlines(path || "day6_input.txt").map { |l| l.strip }
+  lines = File.readlines(path || "day6_input.txt").map(&:strip)
   puts "Part 1: #{AOC2016.day6_part1(lines)}"
   puts "Part 2: #{AOC2016.day6_part2(lines)}"
 end
 
 def day7(path)
-  lines = File.readlines(path || "day7_input.txt").map { |l| l.strip }
+  lines = File.readlines(path || "day7_input.txt").map(&:strip)
   puts "Part 1: #{AOC2016.day7_part1(lines)}"
   puts "Part 2: #{AOC2016.day7_part2(lines)}"
 end
