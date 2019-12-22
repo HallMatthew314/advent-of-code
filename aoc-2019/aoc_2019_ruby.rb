@@ -918,5 +918,48 @@ module AOC2019
       cy += 1 unless top_right
     end
   end
+
+  def day22_part1(steps)
+    deck = (0..10_006).to_a
+
+    stack = -> { deck.reverse! }
+    cut = ->(n) { deck.rotate!(n) }
+
+    deal = lambda do |n|
+      temp = [0] * deck.size
+      index = 0
+
+      deck.each do |d|
+        temp[index] = d
+        index = (index + n) % deck.size
+      end
+
+      deck = temp
+    end   
+
+    steps.each do |s|
+      case
+      when s =~ /^cut/
+        n = s.match(/(-?\d+)$/).captures.first.to_i
+        cut.call(n)
+
+      when s =~ /stack$/
+        stack.call
+
+      when s =~ /increment/
+        n = s.match(/(-?\d+)$/).captures.first.to_i
+        deal.call(n)
+
+      else
+        raise "Couldn't parse step."
+      end
+    end
+
+    deck.index(2019)
+  end
+
+  def day22_part2(steps)
+    nil
+  end
 end
 

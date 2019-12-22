@@ -89,6 +89,12 @@ def day19(path)
   puts "Part 2: #{AOC2019.day19_part2(c.dup)}"
 end
 
+def day22(path)
+  steps = File.readlines(path || "day22_input.txt").map(&:strip)
+  puts "Part 1: #{AOC2019.day22_part1(steps)}"
+  puts "Part 2: #{AOC2019.day22_part2(steps)}"
+end
+
 case ARGV[0].to_i
 when 1 then day1(ARGV[1])
 when 2 then day2(ARGV[1])
@@ -104,6 +110,7 @@ when 11 then day11(ARGV[1])
 when 12 then day12(ARGV[1])
 when 13 then day13(ARGV[1])
 when 19 then day19(ARGV[1])
+when 22 then day22(ARGV[1])
 else puts "Please supply a day to run: ./input_answers.rb <DAY NUMBER> (INPUT PATH)"
 end
 
