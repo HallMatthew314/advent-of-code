@@ -919,6 +919,7 @@ module AOC2019
     end
   end
 
+  # OPTIMIZE: This can be done without simulating the entire deck.
   def day22_part1(steps)
     deck = (0..10_006).to_a
 
@@ -959,7 +960,72 @@ module AOC2019
   end
 
   def day22_part2(steps)
-    nil
+    deck = (0...119315717514047).to_a
+
+    stack = -> { deck.reverse! }
+    cut = ->(n) { deck.rotate!(n) }
+
+    deal = lambda do |n|
+      temp = [0] * deck.size
+      index = 0
+
+      deck.each do |d|
+        temp[index] = d
+        index = (index + n) % deck.size
+      end
+
+      deck = temp
+    end   
+
+    101741582076661.times do
+      steps.each do |s|
+        case
+        when s =~ /^cut/
+          n = s.match(/(-?\d+)$/).captures.first.to_i
+          cut.call(n)
+
+        when s =~ /stack$/
+          stack.call
+
+        when s =~ /increment/
+          n = s.match(/(-?\d+)$/).captures.first.to_i
+          deal.call(n)
+
+        else
+          raise "Couldn't parse step."
+        end
+      end
+    end
+
+    deck[2020]
+  end
+
+  def day22_part2(steps)
+    # Highest card is size - 1
+    size = 119315717514047
+    loops = 101741582076661
+
+    index = 2020
+
+    loops.times do
+      steps.each do |s|
+        n = s.match(/(-?\d+)$/)&.captures.first.to_i
+
+        case
+        when s =~ /^cut/
+          index = (index + n) % size
+
+        when s =~ /stack$/
+          index = size - index - 1
+
+        when s =~ /increment/
+          index.zero?
+
+        else
+          raise "Couldn't parse step."
+        end
+      end
+    end
   end
 end
 
