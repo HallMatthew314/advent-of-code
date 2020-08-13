@@ -16,7 +16,7 @@ Below are the problems that I have researched and what I learned from doing so.
 	<summary>2015 - Day 7 Part 1</summary>
 	My first major leap in progress came after I realised I could use a similar approach for this problem as I did for 2019 Day 6.
 	After I implemented the hash in Ruby I ran the program, but it seemed to be taking longer than it should.
-	I suspected that I was dealing with circular dependancies, as the input data is essentially a directional graph.
+	I suspected that I was dealing with circular dependencies, as the input data is essentially a directional graph.
 	I was very frustrated at this and decided to search for answers when I came across the old Daily Solutions Megathread on the subreddit.
 	There I learned that after calculating a wire's value, I could replace the expression to calculate the value in the hash with the expression's result.
 	I implemented this and it worked.
@@ -31,8 +31,8 @@ Below are the problems that I have researched and what I learned from doing so.
 	This lack of information made it troublesome to debug my solution.
 	I was confident that the process I had devised would work, but I wasn't getting anything meaningful when I ran my code.
 	After checking the subreddit, I saw some example outputs and realised what the problem was.
-	The height of the example solutions I saw was 6, which was also stated in the proble, description.
-	However, I had declared the height to be 8 in my code.
+	The height of the example solutions I saw was 6, which was also stated in the problem description.
+	However, I declared the height to be 8 in my code.
 	I changed this to 6 and the output was much more legible, as well as providing the correct solution.
 </details>
 
@@ -40,7 +40,7 @@ Below are the problems that I have researched and what I learned from doing so.
 	<summary>2019 - Day 10 Part 2</summary>
 	I tired looking at a lot of clues for this one, but none of them were able to help me.
 	Out of desperation, I eventually tried changing the index offset to be calculated from `Math::PI` instead of `Math::PI/2`.
-	I found this unusual, since in the standard was of measuring angles in mathematics, 'straight up' or 0 degrees in the puzzle <em>should</em> be equal to half-pi radians.
+	I found this unusual, since in the standard was of measuring angles in mathematics, 'straight up' or 0 degrees in the puzzle *should* be equal to half-pi radians.
 	A short while later, I realised my function for calculating angles was incorrect.
 	I was calling the `Math.atan2` method by passing the `x` value before the `y` value.
 	There were two things wrong with this.
