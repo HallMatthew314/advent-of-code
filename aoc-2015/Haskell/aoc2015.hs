@@ -1,11 +1,19 @@
 module AOC2015 where
 
 import qualified Data.Set as Set
+import qualified Data.ByteString.UTF8 as UTF8
+
+import Data.ByteArray.Encoding
+import Crypto.Hash
+
 import Data.List.Split (splitOn)
+import Data.ByteString (ByteString)
 
 -- General utility functions
 
--- Returns a string with no newline characters
+-- Returns a string with no newline characters.
+-- This is needed because readFile includes
+-- line feeds at the end of files.
 oneLine :: String -> String
 oneLine = filter (/= '\n')
 
@@ -67,6 +75,40 @@ day3Part2 s =
         robot = d3Points $ d3TakeEvenIndexes $ tail $ oneLine s
     in  length $ Set.union santa robot
 
+-- Day 4
+
+-- This took way too long to figure out
+md5 :: String -> String
+md5 s = result
+    where
+        bytes  = UTF8.fromString s           :: ByteString
+        digest = hashWith MD5 bytes          :: Digest MD5
+        hex    = convertToBase Base16 digest :: ByteString
+        result = UTF8.toString hex           :: String
+
+d4Hash :: (String, Int) -> String
+d4Hash (key, i) = md5 (key ++ show i)
+
+d4GoodP1 :: String -> Bool
+d4GoodP1 ('0':'0':'0':'0':'0':_) = True
+d4GoodP1 _                       = False
+
+d4GoodP2 :: String -> Bool
+d4GoodP2 ('0':'0':'0':'0':'0':'0':_) = True
+d4GoodP2 _                           = False
+
+day4Part1 :: String -> Int
+day4Part1 key = snd $ head $ filter (d4GoodP1 . d4Hash) targets
+    where 
+        k       = oneLine key
+        targets = [(k, i) | i <- [1 .. ]]
+
+day4Part2 :: String -> Int
+day4Part2 key = snd $ head $ filter (d4GoodP2 . d4Hash) targets
+    where
+        k       = oneLine key
+        targets = [(k, i) | i <- [1 .. ]]
+
 -- Helper functions for running on input files.
 run :: Show a => (String -> a) -> FilePath -> IO ()
 run day path = do
@@ -79,4 +121,6 @@ runD2P1 = run day2Part1 "day2_input.txt"
 runD2P2 = run day2Part2 "day2_input.txt"
 runD3P1 = run day3Part1 "day3_input.txt"
 runD3P2 = run day3Part2 "day3_input.txt"
+runD4P1 = run day4Part1 "day4_input.txt"
+runD4P2 = run day4Part2 "day4_input.txt"
 
