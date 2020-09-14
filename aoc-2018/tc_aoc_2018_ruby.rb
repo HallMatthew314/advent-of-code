@@ -48,5 +48,16 @@ class TestAOC2018 < Test::Unit::TestCase
 
     assert_equal("fgij", AOC2018.day2_part2(ids.dup))
   end
+
+  def test_day3
+    claims = [
+      "#1 @ 1,3: 4x4",
+      "#2 @ 3,1: 4x4",
+      "#3 @ 5,5: 2x2",
+    ]
+
+    assert_equal(4, AOC2018.day3_part1(claims))
+    assert_equal(3, AOC2018.day3_part2(claims.dup))
+  end
 end
 

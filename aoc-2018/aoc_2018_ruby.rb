@@ -4,6 +4,36 @@ require "matrix"
 
 module AOC2018
 
+  Rect = Struct.new(:x, :y, :width, :height) do
+    def top
+      y
+    end
+
+    def bottom
+      y + height - 1
+    end
+
+    def left
+      x
+    end
+
+    def right
+      x + width - 1
+    end
+
+    def overlap?(other)
+      return false if left > other.right || right < other.left
+      return false if bottom > other.top || top < other.bottom
+      true
+    end
+  end
+
+  Claim = Struct.new(:id, :rectangle) do
+    def overlap?(other)
+      rectangle.overlap?(other.rectangle)
+    end
+  end
+
   module_function
 
   def day1_part1(deltas)
@@ -65,8 +95,41 @@ module AOC2018
       end
     end
   end
-end
 
-# 
-# pbykrmjmizwhxlqnwasfgtycdv
+  def day3_part1(claims)
+    fabric = Hash.new(0)
+    p_claim = /(\d+),(\d+): (\d+)x(\d+)$/
+
+    claims.each do |claim|
+      xpos, ypos, w, h = claim.match(p_claim).captures.map(&:to_i)
+
+      (ypos...ypos + h).each do |y|
+        (xpos...xpos + w).each { |x| fabric[[x, y]] += 1 }
+      end
+    end
+
+    fabric.values.count { |v| v > 1 }
+  end
+
+  def day3_part2(claims)
+
+    p_claim = /^#(\d+) @ (\d+),(\d+): (\d+)x(\d+)$/
+
+    claims.map! do |c|
+      i, x, y, w, h = c.match(p_claim).captures.map(&:to_i)
+      Claim.new(i, Rect.new(x, y, w, h))
+    end
+
+    until claims.empty?
+      claim = claims.pop
+      old_size = claims.size
+
+      claims.reject! { |c| claim.overlap?(c) }
+
+      return claim.id if old_size == claims.size
+    end
+
+    raise "They all overlap."
+  end
+end
 
