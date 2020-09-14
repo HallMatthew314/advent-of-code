@@ -2,12 +2,13 @@ module AOC2015 where
 
 import qualified Data.Set as Set
 import qualified Data.ByteString.UTF8 as UTF8
+import qualified Data.ByteString as BS
 
 import Data.ByteArray.Encoding
 import Crypto.Hash
 
+import Data.List (isPrefixOf)
 import Data.List.Split (splitOn)
-import Data.ByteString (ByteString)
 
 -- General utility functions
 
@@ -16,6 +17,10 @@ import Data.ByteString (ByteString)
 -- line feeds at the end of files.
 oneLine :: String -> String
 oneLine = filter (/= '\n')
+
+-- Only supports lowercase letters
+isVowel :: Char -> Bool
+isVowel c = elem c "aeiou"
 
 -- Day 1
 d1Map :: Char -> Int
@@ -81,9 +86,9 @@ day3Part2 s =
 md5 :: String -> String
 md5 s = result
     where
-        bytes  = UTF8.fromString s           :: ByteString
+        bytes  = UTF8.fromString s           :: BS.ByteString
         digest = hashWith MD5 bytes          :: Digest MD5
-        hex    = convertToBase Base16 digest :: ByteString
+        hex    = convertToBase Base16 digest :: BS.ByteString
         result = UTF8.toString hex           :: String
 
 d4Hash :: (String, Int) -> String
@@ -109,6 +114,58 @@ day4Part2 key = snd $ head $ filter (d4GoodP2 . d4Hash) targets
         k       = oneLine key
         targets = [(k, i) | i <- [1 .. ]]
 
+-- Day 5
+-- Speed could be improved with a scan instead of a filter
+d5ThreeVowels :: String -> Bool
+d5ThreeVowels w = length (filter isVowel w) >= 3
+
+d5Consec :: Eq a => [a] -> Bool
+d5Consec (x:y:xs) =
+    if x == y
+        then True
+        else d5Consec (y:xs)
+d5Consec _ = False
+
+d5NoBadPairs :: String -> Bool
+d5NoBadPairs (x:y:xs) =
+    if xy == "ab" || xy == "cd" || xy == "pq" || xy == "xy"
+        then False
+        else d5NoBadPairs (y:xs)
+    where xy = [x,y]
+d5NoBadPairs _ = True
+
+d5Double :: Eq a => [a] -> Bool
+d5Double (x:y:z:xs) =
+    if x == z
+        then True
+        else d5Double (y:z:xs)
+d5Double _ = False
+
+d5SubSeq :: Eq a => [a] -> [a] -> Bool
+d5SubSeq p xs
+    | length p > length xs = False
+    | isPrefixOf p xs      = True
+    | otherwise            = d5SubSeq p $ tail xs
+
+d5Pair :: Eq a => [a] -> Bool
+d5Pair (x:y:xs) =
+    if d5SubSeq [x,y] xs
+        then True
+        else d5Pair (y:xs)
+d5Pair _ = False
+
+d5P1Nice :: String -> Bool
+d5P1Nice w = d5ThreeVowels w && d5Consec w && d5NoBadPairs w
+
+d5P2Nice :: String -> Bool
+d5P2Nice w = d5Double w && d5Pair w
+
+day5Part1 :: String -> Int
+day5Part1 = length . filter d5P1Nice . words
+
+day5Part2 :: String -> Int
+day5Part2 = length . filter d5P2Nice . words
+
 -- Helper functions for running on input files.
 run :: Show a => (String -> a) -> FilePath -> IO ()
 run day path = do
@@ -123,4 +180,6 @@ runD3P1 = run day3Part1 "day3_input.txt"
 runD3P2 = run day3Part2 "day3_input.txt"
 runD4P1 = run day4Part1 "day4_input.txt"
 runD4P2 = run day4Part2 "day4_input.txt"
+runD5P1 = run day5Part1 "day5_input.txt"
+runD5P2 = run day5Part2 "day5_input.txt"
 
