@@ -48,8 +48,8 @@ day2Part1 :: String -> Int
 day2Part1 s = count2s * count3s
   where
     counts  = map (Map.elems . d2CharCount) $ words s
-    count2s = length $ filter (any (==2)) counts
-    count3s = length $ filter (any (==3)) counts
+    count2s = length $ filter (elem 2) counts
+    count3s = length $ filter (elem 3) counts
 
 day2Part2 :: String -> Int
 day2Part2 = undefined
