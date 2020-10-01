@@ -1,6 +1,7 @@
 module AOC2018 where
 
 import qualified Data.Set as Set
+import qualified Data.Map as Map
 
 -- General utility functions
 
@@ -36,6 +37,23 @@ day1Part2 s =
   where
     d = firstDuplicate $ scanl (+) 0 $ cycle $ d1Deltas s
 
+-- Day 2
+d2CharCount :: String -> Map.Map Char Int
+d2CharCount = foldl f Map.empty
+  where 
+    f m c = Map.insert c v m
+      where v = Map.findWithDefault 0 c m + 1
+
+day2Part1 :: String -> Int
+day2Part1 s = count2s * count3s
+  where
+    counts  = map (Map.elems . d2CharCount) $ words s
+    count2s = length $ filter (any (==2)) counts
+    count3s = length $ filter (any (==3)) counts
+
+day2Part2 :: String -> Int
+day2Part2 = undefined
+
 -- Helper functions for running on input files.
 run :: Show a => (String -> a) -> FilePath -> IO ()
 run day path = do
@@ -44,4 +62,6 @@ run day path = do
 
 runD1P1 = run day1Part1 "day1_input.txt"
 runD1P2 = run day1Part2 "day1_input.txt"
+runD2P1 = run day2Part1 "day2_input.txt"
+runD2P2 = run day2Part2 "day2_input.txt"
 
