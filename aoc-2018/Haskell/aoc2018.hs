@@ -20,6 +20,22 @@ firstDuplicate xs = dup xs Set.empty
         then Just x
         else dup xs $ Set.insert x s
 
+hamming :: Eq a => [a] -> [a] -> Int
+hamming xs ys
+  -- Hamming distance applies only to lists of equal size.
+  | length xs /= length ys = undefined
+  | otherwise = length $ filter (not . eq) $ zip xs ys
+  where eq (x,y) = x == y
+
+hammingT :: Eq a => ([a], [a]) -> Int
+hammingT (x, y) = hamming x y
+
+uniquePairs :: [a] -> [(a, a)]
+uniquePairs []     = undefined
+uniquePairs [_]    = undefined
+uniquePairs [x,y]  = [(x, y)]
+uniquePairs (x:xs) = [(x, y) | y <- xs] ++ uniquePairs xs
+
 -- Day 1
 d1Deltas :: String -> [Int]
 d1Deltas = map read . words . filter (/='+')
@@ -51,8 +67,10 @@ day2Part1 s = count2s * count3s
     count2s = length $ filter (elem 2) counts
     count3s = length $ filter (elem 3) counts
 
-day2Part2 :: String -> Int
-day2Part2 = undefined
+day2Part2 :: String -> String
+day2Part2 s = foldr f "" $ zip (fst ids) (snd ids)
+  where ids       = head $ filter ((==1) . hammingT) $ uniquePairs $ words s
+        f (x,y) w = if x == y then x:w else w
 
 -- Helper functions for running on input files.
 run :: Show a => (String -> a) -> FilePath -> IO ()
