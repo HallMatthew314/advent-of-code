@@ -1,4 +1,4 @@
-module AOC2015 where
+module AOC2016 where
 
 -- General utility functions
 

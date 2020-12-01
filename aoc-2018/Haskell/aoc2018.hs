@@ -36,6 +36,9 @@ uniquePairs [_]    = undefined
 uniquePairs [x,y]  = [(x, y)]
 uniquePairs (x:xs) = [(x, y) | y <- xs] ++ uniquePairs xs
 
+zipT :: ([a], [b]) -> [(a, b)]
+zipT (xs, ys) = zip xs ys
+
 -- Day 1
 d1Deltas :: String -> [Int]
 d1Deltas = map read . words . filter (/='+')
@@ -47,7 +50,7 @@ day1Part2 :: String -> Int
 day1Part2 s =
   case d of
     (Just x) -> x
-    Nothing  -> undefined
+    Nothing  -> error "Got to the end of an infinite list. wat."
     -- Given that the list is infinite, it should be
     -- impossible to get a `Nothing` here.
   where
@@ -68,7 +71,7 @@ day2Part1 s = count2s * count3s
     count3s = length $ filter (elem 3) counts
 
 day2Part2 :: String -> String
-day2Part2 s = foldr f "" $ zip (fst ids) (snd ids)
+day2Part2 s = foldr f "" $ zipT ids
   where ids       = head $ filter ((==1) . hammingT) $ uniquePairs $ words s
         f (x,y) w = if x == y then x:w else w
 
