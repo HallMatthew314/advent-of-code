@@ -1,9 +1,15 @@
 module AOC2020 where
 
+import qualified Data.Set as S
+
 import Data.Char (isDigit)
 
 intList :: String -> [Int]
 intList = map read . words
+
+-- This should be a Maybe a but I don't feel like refactoring right now.
+first :: (a -> Bool) -> [a] -> a
+first p = head . filter p
 
 xor :: Bool -> Bool -> Bool
 xor True False = True
@@ -15,7 +21,6 @@ day1Part1 = mul . first ((==2020) . add) . uniquePairs . intList
   where
     add (x,y)  = x + y 
     mul (x,y)  = x * y
-    first p xs = head $ filter p xs
 
 uniquePairs :: [a] -> [(a,a)]
 uniquePairs xs | length xs < 2 = error "Need at least 2 items"
@@ -23,12 +28,17 @@ uniquePairs [x,y]  = [(x,y)]
 uniquePairs (x:xs) = [(x,y) | y <- xs] ++ uniquePairs xs
 
 day1Part2 :: String -> Int
-day1Part2 = undefined
+day1Part2 = mul . first ((==2020) . add) . uniqueTriples . intList
+  where
+    add (x,y,z) = x + y + z
+    mul (x,y,z) = x * y * z
 
 uniqueTriples :: [a] -> [(a,a,a)]
 uniqueTriples xs | length xs < 3 = error "Need at least 3 items"
 uniqueTriples [x,y,z] = [(x,y,z)]
-uniqueTriples (x:xs) = undefined
+uniqueTriples (x:xs) = ts ++ uniqueTriples xs
+  where
+    ts = map (\ (a,b) -> (x,a,b)) $ uniquePairs xs
 
 data Policy = Policy Int Int Char
   deriving (Show)
