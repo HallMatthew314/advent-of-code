@@ -1,8 +1,10 @@
 module AOC2020 where
 
+import qualified Data.Map.Strict as M
 import qualified Data.Set as S
 
-import Data.Char (isDigit)
+import Data.Char (isDigit, isHexDigit)
+import Data.List (intercalate)
 
 intList :: String -> [Int]
 intList = map read . words
@@ -19,6 +21,12 @@ xor _ _        = False
 step :: Int -> [a] -> [a]
 step _ []     = []
 step n (x:xs) = x:step n (drop (n - 1) xs)
+
+--splitEmptyLines :: String -> [String]
+splitEmptyLines = map (intercalate " ") . foldr f [[]] . lines
+  where
+    f "" (a:acc) = []:a:acc
+    f x (a:acc)  = (x:a):acc
 
 day1Part1 :: String -> Int
 day1Part1 = mul . first ((==2020) . add) . uniquePairs . intList
@@ -101,6 +109,71 @@ day3Part2 s = r1d1 * r3d1 * r5d1 * r7d1 * r1d2
     r7d1 = countTrees 7 1 trees
     r1d2 = countTrees 1 2 trees
 
+type Passport = M.Map String String
+
+fieldsPresent :: Passport -> Bool
+fieldsPresent = S.isSubsetOf required . S.fromList . M.keys
+  where
+    required = S.fromList ["hcl","iyr","eyr","ecl","pid","byr","hgt"]
+
+fieldsCorrect :: Passport -> Bool
+fieldsCorrect = all fieldCorrect . M.assocs
+
+fieldCorrect :: (String,String) -> Bool
+fieldCorrect ("byr",v) = 1920 <= y && y <= 2002
+  where
+    y = read v :: Int
+
+fieldCorrect ("iyr",v) = 2010 <= y && y <= 2020
+  where
+    y = read v :: Int
+
+fieldCorrect ("eyr",v) = 2020 <= y && y <= 2030
+  where
+    y = read v :: Int
+
+fieldCorrect ("hgt",v) = (u == "cm" || u == "in") && inBounds
+  where
+    h = read $ takeWhile isDigit v :: Int
+    u = dropWhile isDigit v
+    inBounds =
+      if u == "cm"
+        then 150 <= h && h <= 193
+        else 59 <= h && h <= 76
+
+fieldCorrect ("hcl",'#':v) = length v == 6 && all isHexDigit v
+
+fieldCorrect ("ecl",v) = S.member v colors
+  where
+    colors = S.fromList ["amb","blu","brn","gry","grn","hzl","oth"]
+
+fieldCorrect ("pid",v) = length v == 9 && all isDigit v
+
+fieldCorrect ("cid",v) = True
+
+fieldCorrect _ = False -- Non-recognised fields will fail
+
+-- "([a-z]+:[a-z]+) *"
+passportFromOneLine :: String -> Passport
+passportFromOneLine = M.fromList . map f . words
+  where
+    f s = (k,v)
+      where
+        k     = takeWhile (/=':') s
+        (_:v) = dropWhile (/=':') s
+
+parsePassports :: String -> [Passport]
+parsePassports = map passportFromOneLine . splitEmptyLines
+
+day4Part1 :: String -> Int
+day4Part1 = length . filter fieldsPresent . parsePassports
+
+day4Part2 :: String -> Int
+day4Part2 = length . filter p . parsePassports
+  where
+    p :: Passport -> Bool
+    p pass = fieldsPresent pass && fieldsCorrect pass
+
 run :: Show a => (String -> a) -> FilePath -> IO ()
 run day path = do
   inp <- readFile path
@@ -112,4 +185,6 @@ runD2P1 = run day2Part1 "day2_input.txt"
 runD2P2 = run day2Part2 "day2_input.txt"
 runD3P1 = run day3Part1 "day3_input.txt"
 runD3P2 = run day3Part2 "day3_input.txt"
+runD4P1 = run day4Part1 "day4_input.txt"
+runD4P2 = run day4Part2 "day4_input.txt"
 
