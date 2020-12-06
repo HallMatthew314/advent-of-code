@@ -4,7 +4,7 @@ import qualified Data.Map.Strict as M
 import qualified Data.Set as S
 
 import Data.Char (isDigit, isHexDigit)
-import Data.List (intercalate)
+import Data.List (sort, intercalate)
 
 intList :: String -> [Int]
 intList = map read . words
@@ -174,6 +174,57 @@ day4Part2 = length . filter p . parsePassports
     p :: Passport -> Bool
     p pass = fieldsPresent pass && fieldsCorrect pass
 
+calcBSP :: Char -> Char -> String -> Int
+calcBSP one zero = foldl f 0
+  where
+    f i c
+      | c == one  = i * 2 + 1
+      | c == zero = i * 2
+      | otherwise = error e
+      where
+        e = "Bad one or zero value, got " ++ [c]
+
+boardingPassID :: String -> Int
+boardingPassID pass = row * 8 + col
+  where
+    (passRow,passCol) = splitAt 7 pass
+    row = calcBSP 'B' 'F' passRow
+    col = calcBSP 'L' 'R' passCol
+
+day5Part1 :: String -> Int
+day5Part1 = maximum . map boardingPassID . words
+
+minMaxSum :: [Int] -> (Int,Int,Int)
+minMaxSum (x:xs) = foldr f (x,x,x) xs
+  where
+    f i (min',max',sum') = ( if i < min' then i else min'
+                           , if i > max' then i else max'
+                           , sum' + i
+                           )
+
+triangleNumber :: Int -> Int
+triangleNumber n = n * (n + 1) `div` 2
+
+-- TODO: Actual answer is three bigger than what it should be?
+-- Nothing makes sense anymore?
+-- End me
+day5Part2 :: String -> Int
+-- screw it
+day5Part2 s = (+1) $ fst $ findGap $ sort $ map boardingPassID $ words s
+
+findGap :: [Int] -> (Int,Int)
+findGap (x:y:xs)
+  | y - x == 2 = (x,y)
+  | otherwise  = findGap $ y:xs
+
+{-
+day5Part2 s = expected - sum'
+  where
+    ids = map boardingPassID $ words s
+    (min',max',sum') = minMaxSum ids
+    expected = triangleNumber max' - triangleNumber (min' - 1)
+-}
+
 run :: Show a => (String -> a) -> FilePath -> IO ()
 run day path = do
   inp <- readFile path
@@ -187,4 +238,6 @@ runD3P1 = run day3Part1 "day3_input.txt"
 runD3P2 = run day3Part2 "day3_input.txt"
 runD4P1 = run day4Part1 "day4_input.txt"
 runD4P2 = run day4Part2 "day4_input.txt"
+runD5P1 = run day5Part1 "day5_input.txt"
+runD5P2 = run day5Part2 "day5_input.txt"
 
