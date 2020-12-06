@@ -3,7 +3,7 @@ module AOC2020 where
 import qualified Data.Map.Strict as M
 import qualified Data.Set as S
 
-import Data.Char (isDigit, isHexDigit)
+import Data.Char (isLower, isDigit, isHexDigit)
 import Data.List (sort, intercalate)
 
 intList :: String -> [Int]
@@ -225,6 +225,16 @@ day5Part2 s = expected - sum'
     expected = triangleNumber max' - triangleNumber (min' - 1)
 -}
 
+day6Part1 :: String -> Int
+day6Part1 = sum . map f . splitEmptyLines
+  where
+    f = length . S.fromList . filter (/=' ')
+
+day6Part2 :: String -> Int
+day6Part2 = sum . map f . splitEmptyLines
+  where
+    f = length . foldl1 S.intersection . map S.fromList . words
+
 run :: Show a => (String -> a) -> FilePath -> IO ()
 run day path = do
   inp <- readFile path
@@ -240,4 +250,6 @@ runD4P1 = run day4Part1 "day4_input.txt"
 runD4P2 = run day4Part2 "day4_input.txt"
 runD5P1 = run day5Part1 "day5_input.txt"
 runD5P2 = run day5Part2 "day5_input.txt"
+runD6P1 = run day6Part1 "day6_input.txt"
+runD6P2 = run day6Part2 "day6_input.txt"
 
