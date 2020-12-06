@@ -175,7 +175,7 @@ day4Part2 = length . filter p . parsePassports
     p pass = fieldsPresent pass && fieldsCorrect pass
 
 calcBSP :: Char -> Char -> String -> Int
-calcBSP one zero = foldl f 0
+calcBSP zero one = foldl f 0
   where
     f i c
       | c == one  = i * 2 + 1
@@ -184,11 +184,12 @@ calcBSP one zero = foldl f 0
       where
         e = "Bad one or zero value, got " ++ [c]
 
+-- Finally fixed it, got the characters the wrong way around.
 boardingPassID :: String -> Int
 boardingPassID pass = row * 8 + col
   where
     (passRow,passCol) = splitAt 7 pass
-    row = calcBSP 'B' 'F' passRow
+    row = calcBSP 'F' 'B' passRow
     col = calcBSP 'L' 'R' passCol
 
 day5Part1 :: String -> Int
@@ -205,25 +206,12 @@ minMaxSum (x:xs) = foldr f (x,x,x) xs
 triangleNumber :: Int -> Int
 triangleNumber n = n * (n + 1) `div` 2
 
--- TODO: Actual answer is three bigger than what it should be?
--- Nothing makes sense anymore?
--- End me
 day5Part2 :: String -> Int
--- screw it
-day5Part2 s = (+1) $ fst $ findGap $ sort $ map boardingPassID $ words s
-
-findGap :: [Int] -> (Int,Int)
-findGap (x:y:xs)
-  | y - x == 2 = (x,y)
-  | otherwise  = findGap $ y:xs
-
-{-
 day5Part2 s = expected - sum'
   where
     ids = map boardingPassID $ words s
     (min',max',sum') = minMaxSum ids
     expected = triangleNumber max' - triangleNumber (min' - 1)
--}
 
 day6Part1 :: String -> Int
 day6Part1 = sum . map f . splitEmptyLines
