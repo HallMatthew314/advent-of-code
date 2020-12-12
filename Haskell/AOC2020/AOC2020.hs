@@ -223,6 +223,32 @@ day6Part2 = sum . map f . splitEmptyLines
   where
     f = length . foldl1 S.intersection . map S.fromList . words
 
+data Direction = East | North | West | South
+  deriving (Enum,Show)
+
+day12Part1 :: String -> Int
+day12Part1 = manhattan . fst . foldl f ((0,0), East) . words
+  where
+    f (p,d) ('E':n) = (move East (read n) p,d)
+    f (p,d) ('N':n) = (move North (read n) p,d)
+    f (p,d) ('W':n) = (move South (read n) p,d)
+    f (p,d) ('S':n) = (move West (read n) p,d)
+    f (p,d) ('F':n) = (move d (read n) p,d)
+    f (p,d) (c:n) = (p,turn c (read n) d)
+
+manhattan :: Num a => (a,a) -> a
+manhattan (x,y) = abs x + abs y
+
+move :: Direction -> Int -> (Int,Int) -> (Int,Int)
+move North n (x,y) = (x,y+n)
+move South n (x,y) = (x,y-n)
+move East n (x,y) = (x+n,y)
+move West n (x,y) = (x-n,y)
+
+turn :: Char -> Int -> Direction -> Direction
+turn 'L' n d = toEnum $ (div n 90 + fromEnum d) `mod` 4
+turn 'R' n d = turn 'L' (-n) d
+
 run :: Show a => (String -> a) -> FilePath -> IO ()
 run day path = do
   inp <- readFile path
@@ -240,4 +266,5 @@ runD5P1 = run day5Part1 "day5_input.txt"
 runD5P2 = run day5Part2 "day5_input.txt"
 runD6P1 = run day6Part1 "day6_input.txt"
 runD6P2 = run day6Part2 "day6_input.txt"
+runD12P1 = run day12Part1 "day12_input.txt"
 
