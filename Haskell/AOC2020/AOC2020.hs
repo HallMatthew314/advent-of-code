@@ -231,8 +231,8 @@ day12Part1 = manhattan . fst . foldl f ((0,0), East) . words
   where
     f (p,d) ('E':n) = (move East (read n) p,d)
     f (p,d) ('N':n) = (move North (read n) p,d)
-    f (p,d) ('W':n) = (move South (read n) p,d)
-    f (p,d) ('S':n) = (move West (read n) p,d)
+    f (p,d) ('W':n) = (move West (read n) p,d)
+    f (p,d) ('S':n) = (move South (read n) p,d)
     f (p,d) ('F':n) = (move d (read n) p,d)
     f (p,d) (c:n) = (p,turn c (read n) d)
 
