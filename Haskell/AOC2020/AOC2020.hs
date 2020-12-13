@@ -22,6 +22,32 @@ step :: Int -> [a] -> [a]
 step _ []     = []
 step n (x:xs) = x:step n (drop (n - 1) xs)
 
+manhattan :: Num a => (a,a) -> a
+manhattan (x,y) = abs x + abs y
+
+addPair :: Num a => (a,a) -> (a,a) -> (a,a)
+addPair (x1,y1) (x2,y2) = (x1+x2,y1+y2)
+
+subPair :: Num a => (a,a) -> (a,a) -> (a,a)
+subPair (x1,y1) (x2,y2) = (x1-x2,y1-y2)
+
+pairByScalar :: Num a => a -> (a,a) -> (a,a)
+pairByScalar m (x,y) = (m*x,m*y)
+
+-- Rotate about origin, only right-angled turns for now
+rotatePoint :: Num a => Int -> (a,a) -> (a,a)
+rotatePoint deg (x,y) = case deg `div` 90 `mod` 4 of
+  0 -> (x,y)
+  1 -> (-y,x)
+  2 -> (-x,-y)
+  3 -> (y,-x)
+
+rotatePointAbout :: Num a => (a,a) -> Int -> (a,a) -> (a,a)
+rotatePointAbout c deg p = addPair c $ rotatePoint deg $ subPair p c
+--subtract point from center
+--rotate about origin
+--add center point
+
 --splitEmptyLines :: String -> [String]
 splitEmptyLines = map (intercalate " ") . foldr f [[]] . lines
   where
@@ -236,8 +262,9 @@ day12Part1 = manhattan . fst . foldl f ((0,0), East) . words
     f (p,d) ('F':n) = (move d (read n) p,d)
     f (p,d) (c:n) = (p,turn c (read n) d)
 
-manhattan :: Num a => (a,a) -> a
-manhattan (x,y) = abs x + abs y
+    turn :: Char -> Int -> Direction -> Direction
+    turn 'L' n d = toEnum $ (div n 90 + fromEnum d) `mod` 4
+    turn 'R' n d = turn 'L' (-n) d
 
 move :: Direction -> Int -> (Int,Int) -> (Int,Int)
 move North n (x,y) = (x,y+n)
@@ -245,9 +272,19 @@ move South n (x,y) = (x,y-n)
 move East n (x,y) = (x+n,y)
 move West n (x,y) = (x-n,y)
 
-turn :: Char -> Int -> Direction -> Direction
-turn 'L' n d = toEnum $ (div n 90 + fromEnum d) `mod` 4
-turn 'R' n d = turn 'L' (-n) d
+day12Part2 :: String -> Int
+day12Part2 = manhattan . fst . foldl f ((0,0),(10,1)) . words
+  where
+    f (p,w) ('E':n) = (p,move East (read n) w)
+    f (p,w) ('N':n) = (p,move North (read n) w)
+    f (p,w) ('W':n) = (p,move West (read n) w)
+    f (p,w) ('S':n) = (p,move South (read n) w)
+    f (p,w) ('F':n) = (addPair p $ pairByScalar (read n) w,w)
+    f (p,w) (c:n) = (p, turn c (read n) p w)
+
+    turn :: Char -> Int -> (Int,Int) -> (Int,Int) -> (Int,Int)
+    turn 'L' deg p w = rotatePoint deg w
+    turn 'R' deg p w = turn 'L' (-deg) p w
 
 run :: Show a => (String -> a) -> FilePath -> IO ()
 run day path = do
@@ -267,4 +304,5 @@ runD5P2 = run day5Part2 "day5_input.txt"
 runD6P1 = run day6Part1 "day6_input.txt"
 runD6P2 = run day6Part2 "day6_input.txt"
 runD12P1 = run day12Part1 "day12_input.txt"
+runD12P2 = run day12Part2 "day12_input.txt"
 
