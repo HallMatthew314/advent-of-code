@@ -1,7 +1,7 @@
 module AOC2022 where
 
 import Data.Char (ord, isDigit, isUpper)
-import Data.List (sort)
+import Data.List (groupBy, sort)
 import Data.Maybe (fromJust)
 
 day1P1 :: String -> Integer
