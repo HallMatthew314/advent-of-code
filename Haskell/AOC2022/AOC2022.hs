@@ -1,8 +1,18 @@
 module AOC2022 where
 
 import Data.Char (ord, isDigit, isUpper)
-import Data.List (groupBy, sort)
+import Data.List (groupBy, sort, transpose)
 import Data.Maybe (fromJust)
+
+setIndex :: Int -> a -> [a] -> [a]
+setIndex 0 e (_:xs) = e:xs
+setIndex i e (x:xs) = x:setIndex (i - 1) e xs
+setIndex _ _ []     = []
+
+uniq :: Eq a => [a] -> Bool
+uniq [_]    = True
+uniq (x:xs) = all (/=x) xs && uniq xs
+uniq []     = True
 
 day1P1 :: String -> Integer
 day1P1 = maximum . d1Elves
@@ -124,3 +134,47 @@ d4Parse = map go . lines
     go s =
       let [a, _, b, _, c, _, d] = groupBy (\ x y -> isDigit x == isDigit y) s
       in  (read a, read b, read c, read d)
+
+day5P1 :: String -> String
+day5P1 inp =
+  let (stacks, steps) = d5Parse inp
+  in  map head $ foldl (d5Step reverse) stacks steps
+
+day5P1 :: String -> String
+day5P1 inp =
+  let (stacks, steps) = d5Parse inp
+  in  map head $ foldl (d5Step id) stacks steps
+
+d5Step :: ([a] -> [a]) -> [[a]] -> (Int, Int, Int) -> [[a]]
+d5Step f stacks (n, from, to) =
+  let (items, fromStack') = splitAt n $ stacks !! (from - 1)
+      toStack'            = f items ++ stacks !! (to - 1)
+  in  setIndex (to - 1) toStack' $ setIndex (from - 1) fromStack' stack
+
+d5Parse :: String -> ([[Char]], [(Int, Int, Int)])
+d5Parse inp = (stacks, steps)
+  where
+      (stackLines, _:_:stepLines) = span (elem '[') $ lines inp
+      stack = map concat $ transpose $ map getStackRow stackLines
+      getStackRow "   " []
+      getStackRow ('[':c:"]") = [[c]]
+      getStackRow (' ':' ':' ':' ':rest) = []:getStackRow rest
+      getStackRow ('[':c:']':' ':rest) = [c]:getStackRow rest
+      steps = map getStep stepLines
+      getStep line =
+        let [_,x,_,y,_,z] = groupBy (\ x y -> isDigit x == isDigit y) line
+        in  (read, x, read y, read z)
+
+day6P1 :: String -> Integer
+day6P1 = d6Generic 4
+
+day6P2 :: String -> Integer
+day6P2 = d6Generic 14
+
+d6Generic :: Eq a => Int -> [a] -> Integer
+d6Generic bufferSize inp = go (toInteger bufferSize) front back
+  where
+    (front, back) = splitAt bufferSize inp
+    go i buffer (x:xs)
+      | uniq buffer = i
+      | otherwise   = go (i + 1) (x:init buffer) xs
