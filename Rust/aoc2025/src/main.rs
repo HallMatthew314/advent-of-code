@@ -1,3 +1,4 @@
+use std::env;
 use std::fs;
 
 struct D1DialTurn {
@@ -60,12 +61,11 @@ impl D1Dial {
     }
 }
 
-fn day1part1(input: &str) -> u32 {
+fn day1part1(input: &str) -> String {
     let mut dial = D1Dial::new();
     let mut zeroes: u32 = 0;
 
     for s in input.split_whitespace() {
-        let old = dial.pointing_at;
         let Some(dt) = D1DialTurn::parse(s) else {
             panic!("Invalid turn: {}", s);
         };
@@ -73,13 +73,12 @@ fn day1part1(input: &str) -> u32 {
         if dial.pointing_at == 0 {
             zeroes += 1;
         }
-        println!("{} => {}", old, dial.pointing_at);
     }
 
-    zeroes
+    format!("D01P1: {}", zeroes)
 }
 
-fn day1part2(input: &str) -> u32 {
+fn day1part2(input: &str) -> String {
     let mut dial = D1Dial::new();
     let mut zeroes: u32 = 0;
 
@@ -91,18 +90,40 @@ fn day1part2(input: &str) -> u32 {
 
     }
 
-    zeroes
+    format!("D01P2: {}", zeroes)
 }
 
 fn get_whole_file(path: &str) -> String {
-    let bytes = fs::read(path).unwrap();
-    String::from_utf8(bytes).unwrap()
+    let Ok(bytes) = fs::read(path) else {
+        eprintln!("Unable to load file '{}'", path);
+        eprintln!("This is probably a typo in the lookup table.");
+        std::process::exit(1);
+    };
+    let Ok(s) = String::from_utf8(bytes) else {
+        eprintln!("Loaded the file '{}', but it contains invalid UTF-8.", path);
+        std::process::exit(1);
+    };
+    s
+}
+
+fn lookup_solution(name: String) -> Option<(fn(&str) -> String, &'static str)> {
+    match name.as_str() {
+        "D01P1" => Some((day1part1, "day01_input.txt")),
+        "D01P2" => Some((day1part2, "day01_input.txt")),
+        //"D02P1" => Some((day2part1, "day02_input.txt")),
+        //"D02P2" => Some((day2part2, "day02_input.txt")),
+        _       => None,
+    }
 }
 
 fn main() {
-    println!("Running D01P2...");
-    let input = get_whole_file("day01_input.txt");
-    println!("{:?}", day1part2(&input));
+    let Some((f, input_path)) = env::args().filter_map(lookup_solution).next() else {
+        eprintln!("No valid solution name provided.");
+        eprintln!("Please provide a name as an argument in the form DxxPy");
+        std::process::exit(1);
+    };
+    let input = get_whole_file(input_path);
+    println!("{:?}", f(&input));
 }
 
 #[cfg(test)]
