@@ -93,6 +93,10 @@ fn day1part2(input: &str) -> String {
     format!("D01P2: {}", zeroes)
 }
 
+fn day2part1(input: &str) -> String {
+    format!("D02P1: TODO")
+}
+
 fn get_whole_file(path: &str) -> String {
     let Ok(bytes) = fs::read(path) else {
         eprintln!("Unable to load file '{}'", path);
@@ -130,28 +134,28 @@ fn main() {
 mod tests {
     use super::*;
 
-    const D1_TEST_INPUT: &'static str ="
-L30
-R48
-L5
-R60
-L55
-L1
-L99
-R14
-L82
-";
+    const D1_TEST_INPUT: &'static str ="L68\nL30\nR48\nL5\nR60\nL55\nL1\nL99\nR14\nL82";
+
+    const D2_TEST_INPUT: &'static str = "11-22,95-115,998-1012,1188511880-1188511890,222220-222224,
+1698522-1698528,446443-446449,38593856-38593862,565653-565659,
+824824821-824824827,2121212118-2121212124";
 
     #[test]
     fn test_d1p1() {
         let expected = 3;
-        assert_eq!(expected, day1part1(D1_TEST_INPUT));
+        assert_eq!(format!("D01P1: {}", expected), day1part1(D1_TEST_INPUT));
     }
 
     #[test]
     fn test_d1p2() {
         let expected = 6;
-        assert_eq!(expected, day1part2(D1_TEST_INPUT));
+        assert_eq!(format!("D01P2: {}", expected), day1part2(D1_TEST_INPUT));
+    }
+
+    #[test]
+    fn test_d2p1() {
+        let expected = 1227775554;
+        assert_eq!(format!("D02P1: {}", expected), day2part1(D1_TEST_INPUT));
     }
 }
 
