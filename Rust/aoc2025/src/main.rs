@@ -217,6 +217,92 @@ fn day3part2(input: &str) -> String {
     format!("D03P2: {}", day3generic::<12>(input))
 }
 
+fn d4parse_map(input: &str) -> Vec<Vec<u8>> {
+    input.lines().map(|line| {
+        line.chars().map(|c| match c {
+            '.' => 0_u8,
+            '@' => 1_u8,
+            _   => panic!("Invalid map char: '{}'", c),
+        }).collect()
+    }).collect()
+}
+
+// also counts the given cell
+fn d4is_accessable(r: usize, c: usize, map: &[Vec<u8>]) -> bool {
+    let mut sum = 0;
+
+    'row: for dr in -1_isize..=1_isize {
+        let ri = match r.checked_add_signed(dr) {
+            Some(x) => x,
+            None    => { continue 'row; } // oob
+        };
+
+        'col: for dc in -1isize..=1isize {
+            let ci = match c.checked_add_signed(dc) {
+                Some(x) => x,
+                None    => { continue 'col; } // oob
+            };
+
+            sum += map.get(ri)
+                .and_then(|row| row.get(ci))
+                .unwrap_or(&0);
+        }
+    }
+
+    // leq because the center is also counted
+    sum <= 4
+}
+
+fn day4part1(input: &str) -> String {
+    let map = d4parse_map(input);
+
+    let mut accessable: usize = 0;
+
+    for r in 0..map.len() {
+        for c in 0.. map[r].len() {
+            if map[r][c] == 1 {
+                if d4is_accessable(r, c, &map) {
+                    // leq because the counting function also counts the center
+                    accessable += 1;
+                }
+            }
+        }
+    }
+
+    format!("D04P1: {}", accessable)
+}
+
+fn day4part2(input: &str) -> String {
+    let mut map = d4parse_map(input);
+    let mut accessable: usize = 0;
+    let mut to_remove: Vec<(usize, usize)>;
+
+    loop {
+        to_remove = vec![];
+
+        for r in 0..map.len() {
+            for c in 0..map[r].len() {
+                if map[r][c] == 1 {
+                    if d4is_accessable(r, c, &map) {
+                        to_remove.push((r, c));
+                        accessable += 1;
+                    }
+                }
+            }
+        }
+
+        if to_remove.is_empty() {
+            break;
+        }
+
+        for (r, c) in to_remove.iter() {
+            map[*r][*c] = 0;
+        }
+    }
+
+    format!("D04P2: {}", accessable)
+}
+
 fn get_whole_file(path: &str) -> String {
     let Ok(bytes) = fs::read(path) else {
         eprintln!("Unable to load file '{}'", path);
@@ -238,6 +324,8 @@ fn lookup_solution(name: String) -> Option<(fn(&str) -> String, &'static str)> {
         "D02P2" => Some((day2part2, "day02_input.txt")),
         "D03P1" => Some((day3part1, "day03_input.txt")),
         "D03P2" => Some((day3part2, "day03_input.txt")),
+        "D04P1" => Some((day4part1, "day04_input.txt")),
+        "D04P2" => Some((day4part2, "day04_input.txt")),
         _ => None,
     }
 }
@@ -267,6 +355,8 @@ mod tests {
     const D3_TEST_INPUT: &'static str =
         "987654321111111\n811111111111119\n234234234234278\n818181911112111";
 
+    const D4_TEST_INPUT: &'static str = "..@@.@@@@.\n@@@.@.@.@@\n@@@@@.@.@@\n@.@@@@..@.\n@@.@@@@.@@\n.@@@@@@@.@\n.@.@.@.@@@\n@.@@@.@@@@\n.@@@@@@@@.\n@.@.@@@.@.";
+
     #[test]
     fn test_d1p1() {
         assert_eq!("D01P1: 3".to_owned(), day1part1(D1_TEST_INPUT));
@@ -295,5 +385,15 @@ mod tests {
     #[test]
     fn test_d3p2() {
         assert_eq!("D03P2: 3121910778619".to_owned(), day3part2(D3_TEST_INPUT));
+    }
+
+    #[test]
+    fn test_d4p1() {
+        assert_eq!("D04P1: 13".to_owned(), day4part1(D4_TEST_INPUT));
+    }
+
+    #[test]
+    fn test_d4p2() {
+        assert_eq!("D04P2: 43".to_owned(), day4part2(D4_TEST_INPUT));
     }
 }
