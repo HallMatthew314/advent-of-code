@@ -136,12 +136,8 @@ fn day2generic(input: &str, pred: fn(u64) -> bool) -> u64 {
             panic!("Invalid range: '{}'", body);
         };
 
-        let Ok(start_n) = u64::from_str_radix(start, 10) else {
-            panic!("Couldn't parse '{}' as u64", start);
-        };
-        let Ok(end_n) = u64::from_str_radix(end, 10) else {
-            panic!("Couldn't parse '{}' as u64", end);
-        };
+        let start_n = parse_the(start);
+        let end_n = parse_the(end);
 
         for n in start_n..=end_n {
             if pred(n) {
@@ -160,25 +156,6 @@ fn day2part1(input: &str) -> String {
 fn day2part2(input: &str) -> String {
     format!("D02P2: {}", day2generic(input, d2p2invalid))
 }
-
-/*
-fn d3p1solve_row(digs: &[char]) -> u64 {
-    let mut i_tens: usize = 0;
-    let mut i_ones: usize = 1;
-
-    for i in 1..digs.len() {
-        if digs[i] > digs[i_tens] && i < digs.len() - 1 {
-            i_tens = i;
-            i_ones = i + 1;
-        } else if digs[i] > digs[i_ones] {
-            i_ones = i;
-        }
-    }
-
-    let tens = digs[i_tens].to_digit(10).unwrap() as u64;
-    let ones = digs[i_ones].to_digit(10).unwrap() as u64;
-    tens * 10 + ones
-}*/
 
 fn d3solve_row<const N: usize>(dig_str: &str) -> u64 {
     let digs: Vec<char> = dig_str.chars().collect();
@@ -360,19 +337,16 @@ fn d5parse(input: &str) -> (Vec<D5Range>, Vec<u64>) {
             Some(line) => {
                 let (x_s, y_s) = line.split_once('-')
                     .expect("couldnt find -");
-                let Ok(x) = u64::from_str(x_s) else {
-                    panic!("couldnt parse '{}' as u64", x_s);
-                };
-                let Ok(y) = u64::from_str(y_s) else {
-                    panic!("couldnt parse '{}' as u64", y_s);
-                };
+                let x = parse_the(x_s);
+                let y = parse_the(y_s);
+                
                 ranges.push(D5Range::new(x, y));
             }
         }
     }
 
     while let Some(id_s) = lines.next() {
-        let id = parse_the::<u64>(id_s);
+        let id = parse_the(id_s);
         ids.push(id);
     }
 
@@ -393,13 +367,10 @@ fn d5simplify_ranges(mut ranges: Vec<D5Range>) -> Vec<D5Range> {
         acc = ranges_iter.next().unwrap();
 
         for r in ranges_iter {
-            //println!("comparing {:?} and {:?}", acc, r);
             if let Some(m) = acc.merged_with(&r) {
                 acc = m;
-                //println!("merged into {:?}", acc);
                 found_one = true;
             } else {
-                //println!("no overlap");
                 tmp.push(r);
             }
         }
@@ -431,7 +402,6 @@ fn day5part1(input: &str) -> String {
 fn day5part2(input: &str) -> String {
     let (ranges, _) = d5parse(input);
     let ranges = d5simplify_ranges(ranges);
-    //println!("{:?}", ranges);
     let n: u64 = ranges.iter().map(|r| r.range_size()).sum();
     format!("D05P2: {}", n)
 }
