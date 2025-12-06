@@ -1,5 +1,8 @@
+use std::cmp;
 use std::env;
 use std::fs;
+use std::ops::{Bound, RangeBounds};
+use std::str::FromStr;
 
 struct D1DialTurn {
     turn_right: bool,
@@ -303,6 +306,136 @@ fn day4part2(input: &str) -> String {
     format!("D04P2: {}", accessable)
 }
 
+#[derive(Debug)]
+struct D5Range {
+    start: u64,
+    end_inc: u64,
+}
+
+impl D5Range {
+    fn new(start: u64, end_inc: u64) -> Self {
+        Self { start, end_inc }
+    }
+
+    fn merged_with(&self, other: &Self) -> Option<Self> {
+        if other.contains(&self.start) ||
+                other.contains(&self.end_inc) ||
+                self.contains(&other.start) ||
+                self.contains(&other.end_inc) {
+            Some(D5Range::new(
+                cmp::min(self.start, other.start),
+                cmp::max(self.end_inc, other.end_inc)
+            ))
+        } else {
+            None
+        }
+    }
+
+    fn range_size(&self) -> u64 {
+        self.end_inc - self.start + 1
+    }
+}
+
+impl RangeBounds<u64> for D5Range {
+    fn start_bound(&self) -> Bound<&u64> {
+        Bound::Included(&self.start)
+    }
+
+    fn end_bound(&self) -> Bound<&u64> {
+        Bound::Included(&self.end_inc)
+    }
+}
+
+fn d5parse(input: &str) -> (Vec<D5Range>, Vec<u64>) {
+    let mut lines = input.lines();
+    let mut ranges = Vec::<D5Range>::new();
+    let mut ids = Vec::<u64>::new();
+
+    loop {
+        match lines.next() {
+            None => {
+                panic!("couldnt find separator");
+            }
+            Some("") => { break; }
+            Some(line) => {
+                let (x_s, y_s) = line.split_once('-')
+                    .expect("couldnt find -");
+                let Ok(x) = u64::from_str(x_s) else {
+                    panic!("couldnt parse '{}' as u64", x_s);
+                };
+                let Ok(y) = u64::from_str(y_s) else {
+                    panic!("couldnt parse '{}' as u64", y_s);
+                };
+                ranges.push(D5Range::new(x, y));
+            }
+        }
+    }
+
+    while let Some(id_s) = lines.next() {
+        let id = parse_the::<u64>(id_s);
+        ids.push(id);
+    }
+
+    (ranges, ids)
+}
+
+fn d5simplify_ranges(mut ranges: Vec<D5Range>) -> Vec<D5Range> {
+    let mut countdown = ranges.len();
+    let mut found_one;
+    let mut acc: D5Range;
+    let mut tmp = vec![];
+
+    loop {
+        found_one = false;
+        countdown -= 1;
+
+        let mut ranges_iter = ranges.into_iter();
+        acc = ranges_iter.next().unwrap();
+
+        for r in ranges_iter {
+            //println!("comparing {:?} and {:?}", acc, r);
+            if let Some(m) = acc.merged_with(&r) {
+                acc = m;
+                //println!("merged into {:?}", acc);
+                found_one = true;
+            } else {
+                //println!("no overlap");
+                tmp.push(r);
+            }
+        }
+
+        tmp.push(acc);
+
+        ranges = tmp;
+        tmp = vec![];
+
+        if (!found_one && countdown == 0) || ranges.len() < 2 {
+            return ranges;
+        }
+
+        if found_one {
+            countdown = ranges.len();
+        }
+    }
+}
+
+fn day5part1(input: &str) -> String {
+    let (ranges, ids) = d5parse(input);
+
+    let n = ids.iter()
+        .filter(|id| ranges.iter().any(|r| r.contains(&id)))
+        .count();
+    format!("D05P1: {}", n)
+}
+
+fn day5part2(input: &str) -> String {
+    let (ranges, _) = d5parse(input);
+    let ranges = d5simplify_ranges(ranges);
+    //println!("{:?}", ranges);
+    let n: u64 = ranges.iter().map(|r| r.range_size()).sum();
+    format!("D05P2: {}", n)
+}
+
 fn get_whole_file(path: &str) -> String {
     let Ok(bytes) = fs::read(path) else {
         eprintln!("Unable to load file '{}'", path);
@@ -316,6 +449,13 @@ fn get_whole_file(path: &str) -> String {
     s
 }
 
+fn parse_the<T: FromStr>(input: &str) -> T {
+    let Ok(t) = T::from_str(input) else {
+        panic!("couldnt turn '{}' into something\ni'd give you more information but rust's type system won't let me", input);
+    };
+    t
+}
+
 fn lookup_solution(name: String) -> Option<(fn(&str) -> String, &'static str)> {
     match name.as_str() {
         "D01P1" => Some((day1part1, "day01_input.txt")),
@@ -326,6 +466,8 @@ fn lookup_solution(name: String) -> Option<(fn(&str) -> String, &'static str)> {
         "D03P2" => Some((day3part2, "day03_input.txt")),
         "D04P1" => Some((day4part1, "day04_input.txt")),
         "D04P2" => Some((day4part2, "day04_input.txt")),
+        "D05P1" => Some((day5part1, "day05_input.txt")),
+        "D05P2" => Some((day5part2, "day05_input.txt")),
         _ => None,
     }
 }
@@ -356,6 +498,8 @@ mod tests {
         "987654321111111\n811111111111119\n234234234234278\n818181911112111";
 
     const D4_TEST_INPUT: &'static str = "..@@.@@@@.\n@@@.@.@.@@\n@@@@@.@.@@\n@.@@@@..@.\n@@.@@@@.@@\n.@@@@@@@.@\n.@.@.@.@@@\n@.@@@.@@@@\n.@@@@@@@@.\n@.@.@@@.@.";
+
+    const D5_TEST_INPUT: &'static str = "3-5\n10-14\n16-20\n12-18\n\n1\n5\n8\n11\n17\n32";
 
     #[test]
     fn test_d1p1() {
@@ -395,5 +539,15 @@ mod tests {
     #[test]
     fn test_d4p2() {
         assert_eq!("D04P2: 43".to_owned(), day4part2(D4_TEST_INPUT));
+    }
+
+    #[test]
+    fn test_d5p1() {
+        assert_eq!("D05P1: 3".to_owned(), day5part1(D5_TEST_INPUT));
+    }
+
+    #[test]
+    fn test_d5p2() {
+        assert_eq!("D05P2: 14".to_owned(), day5part2(D5_TEST_INPUT));
     }
 }
