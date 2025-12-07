@@ -1,8 +1,9 @@
 use std::cmp;
 use std::env;
 use std::fs;
+use std::iter::{Iterator, Rev};
 use std::ops::{Bound, RangeBounds};
-use std::str::FromStr;
+use std::str::{Chars, FromStr};
 
 struct D1DialTurn {
     turn_right: bool,
@@ -406,6 +407,114 @@ fn day5part2(input: &str) -> String {
     format!("D05P2: {}", n)
 }
 
+fn day6part1(input: &str) -> String {
+    let mut stacks = vec![];
+    let mut lines_iter = input.lines().peekable();
+    let mut grand_total: u64 = 0;
+
+    for s in lines_iter.next().unwrap().split_whitespace() {
+        let n: u64 = parse_the(s);
+        stacks.push(vec![n]);
+    }
+
+    while let Some(line) = lines_iter.next() {
+        if let None = lines_iter.peek() {
+            for (i, s) in line.split_whitespace().enumerate() {
+                match s {
+                    "+" => {
+                        grand_total += stacks[i].iter().sum::<u64>();
+                    }
+                    "*" => {
+                        grand_total += stacks[i].iter().product::<u64>();
+                    }
+                    _   => {
+                        panic!("unsupported op: '{}'", s);
+                    }
+                }
+            }
+        } else {
+            for (i, s) in line.split_whitespace().enumerate() {
+                let n: u64 = parse_the(s);
+                stacks[i].push(n);
+            }
+        }
+    }
+
+    format!("D06P1: {}", grand_total)
+}
+
+struct D6P2Iterator<'a> {
+    line_iters: Vec<Rev<Chars<'a>>>,
+}
+
+impl<'a> D6P2Iterator<'a> {
+    fn new(input: &'a str) -> Self {
+        let line_iters = input.lines()
+            .map(|line| line.chars().rev())
+            .collect();
+        Self { line_iters }
+    }
+}
+
+impl<'a> Iterator for D6P2Iterator<'a> {
+    type Item = (String, char);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut buf = String::new();
+        let mut c = ' ';
+
+        let mut lines = self.line_iters.iter_mut().peekable();
+        while let Some(line) = lines.next() {
+            if let None = lines.peek() {
+                // last row, operator
+                c = match line.next()? {
+                    ' ' => ' ',
+                    '+' => '+',
+                    '*' => '*',
+                    bad => panic!("invalid operator: '{}'", bad),
+                };
+            } else {
+                match line.next()? {
+                    ' ' => {}
+                    d   => { buf.push(d); }
+                }
+            }
+        }
+        
+        if !buf.is_empty() {
+            Some((buf, c))
+        } else {
+            // empty column, try again
+            self.next()
+        }
+    }
+}
+
+fn day6part2(input: &str) -> String {
+    let mut grand_total: u64 = 0;
+    let mut nums: Vec<u64> = vec![];
+ 
+    for (num_s, op) in D6P2Iterator::new(input) {
+        let n = parse_the(&num_s);
+        nums.push(n);
+
+        match op {
+            ' ' => {}
+            '+' => {
+                grand_total += nums.iter().sum::<u64>();
+                nums = vec![];
+            }
+            '*' => {
+                grand_total += nums.iter().product::<u64>();
+                nums = vec![];
+            }
+            bad => panic!("invalid operator: '{}'", bad),
+        }
+    }
+
+    format!("D06P2: {}", grand_total)
+}
+
 fn get_whole_file(path: &str) -> String {
     let Ok(bytes) = fs::read(path) else {
         eprintln!("Unable to load file '{}'", path);
@@ -438,6 +547,8 @@ fn lookup_solution(name: String) -> Option<(fn(&str) -> String, &'static str)> {
         "D04P2" => Some((day4part2, "day04_input.txt")),
         "D05P1" => Some((day5part1, "day05_input.txt")),
         "D05P2" => Some((day5part2, "day05_input.txt")),
+        "D06P1" => Some((day6part1, "day06_input.txt")),
+        "D06P2" => Some((day6part2, "day06_input.txt")),
         _ => None,
     }
 }
@@ -470,6 +581,8 @@ mod tests {
     const D4_TEST_INPUT: &'static str = "..@@.@@@@.\n@@@.@.@.@@\n@@@@@.@.@@\n@.@@@@..@.\n@@.@@@@.@@\n.@@@@@@@.@\n.@.@.@.@@@\n@.@@@.@@@@\n.@@@@@@@@.\n@.@.@@@.@.";
 
     const D5_TEST_INPUT: &'static str = "3-5\n10-14\n16-20\n12-18\n\n1\n5\n8\n11\n17\n32";
+
+    const D6_TEST_INPUT: &'static str = "123 328  51 64 \n 45 64  387 23 \n  6 98  215 314\n*   +   *   +  ";
 
     #[test]
     fn test_d1p1() {
@@ -519,5 +632,15 @@ mod tests {
     #[test]
     fn test_d5p2() {
         assert_eq!("D05P2: 14".to_owned(), day5part2(D5_TEST_INPUT));
+    }
+
+    #[test]
+    fn test_d6p1() {
+        assert_eq!("D06P1: 4277556".to_owned(), day6part1(D6_TEST_INPUT));
+    }
+
+    #[test]
+    fn test_d6p2() {
+        assert_eq!("D06P2: 3263827".to_owned(), day6part2(D6_TEST_INPUT));
     }
 }
