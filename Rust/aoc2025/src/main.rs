@@ -515,6 +515,77 @@ fn day6part2(input: &str) -> String {
     format!("D06P2: {}", grand_total)
 }
 
+fn d7parse(input: &str) -> Vec<Vec<char>> {
+    input.lines().step_by(2).skip(1).map(|s| s.chars().collect()).collect()
+}
+
+fn day7part1(input: &str) -> String {
+    let line_vecs = d7parse(input);
+    let mid = line_vecs[0].len() / 2;
+
+    let mut beams = vec![0_isize];
+    let mut splits = 0;
+
+    for line in line_vecs {
+        let mut tmp = vec![];
+        for b in beams {
+            if line[mid.strict_add_signed(b)] == '^' {
+                match tmp.last() {
+                    None => {
+                        tmp.push(b-1);
+                    }
+                    Some(x) if *x != (b-1) => {
+                        tmp.push(b-1);
+                    }
+                    Some(_) => {}
+                }
+                tmp.push(b+1);
+                splits += 1;
+            } else {
+                if let Some(x) = tmp.last() {
+                    if *x != b {
+                        tmp.push(b);
+                    }
+                }
+            }
+        }
+        beams = tmp;
+    }
+
+    format!("D07P1: {}", splits)
+}
+
+fn day7part2(input: &str) -> String {
+    let line_vecs = d7parse(input);
+    let line_size = line_vecs[0].len();
+    let mid = line_size / 2;
+
+    let mut prev = vec![0; line_size];
+    prev[mid] = 1;
+
+    for (n, line) in line_vecs.into_iter().enumerate() {
+        let mut current = vec![0; line_size];
+        let ni = n as isize;
+
+        for i in -ni..=ni {
+            let cell = mid.strict_add_signed(i);
+            if line[cell] == '^' {
+                println!("junction at n={} cell={}", n, cell);
+                current[cell-1] += prev[cell];
+                current[cell+1] += prev[cell];
+            } else {
+                println!("no junction at n={} cell={}", n, cell);
+                current[cell] += prev[cell]
+            }
+        }
+
+        prev = current;
+        println!("{:?}", prev);
+    }
+
+    format!("D07P2: {}", prev.iter().sum::<u64>())
+}
+
 fn get_whole_file(path: &str) -> String {
     let Ok(bytes) = fs::read(path) else {
         eprintln!("Unable to load file '{}'", path);
@@ -549,6 +620,8 @@ fn lookup_solution(name: String) -> Option<(fn(&str) -> String, &'static str)> {
         "D05P2" => Some((day5part2, "day05_input.txt")),
         "D06P1" => Some((day6part1, "day06_input.txt")),
         "D06P2" => Some((day6part2, "day06_input.txt")),
+        "D07P1" => Some((day7part1, "day07_input.txt")),
+        "D07P2" => Some((day7part2, "day07_input.txt")),
         _ => None,
     }
 }
@@ -583,6 +656,8 @@ mod tests {
     const D5_TEST_INPUT: &'static str = "3-5\n10-14\n16-20\n12-18\n\n1\n5\n8\n11\n17\n32";
 
     const D6_TEST_INPUT: &'static str = "123 328  51 64 \n 45 64  387 23 \n  6 98  215 314\n*   +   *   +  ";
+
+    const D7_TEST_INPUT: &'static str = ".......S.......\n...............\n.......^.......\n...............\n......^.^......\n...............\n.....^.^.^.....\n...............\n....^.^...^....\n...............\n...^.^...^.^...\n...............\n..^...^.....^..\n...............\n.^.^.^.^.^...^.\n...............";
 
     #[test]
     fn test_d1p1() {
@@ -643,4 +718,15 @@ mod tests {
     fn test_d6p2() {
         assert_eq!("D06P2: 3263827".to_owned(), day6part2(D6_TEST_INPUT));
     }
+
+    #[test]
+    fn test_d7p1() {
+        assert_eq!("D07P1: 21".to_owned(), day7part1(D7_TEST_INPUT));
+    }
+
+    #[test]
+    fn test_d7p2() {
+        assert_eq!("D07P2: 40".to_owned(), day7part2(D7_TEST_INPUT));
+    }
+
 }
