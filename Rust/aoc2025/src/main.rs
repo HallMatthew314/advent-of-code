@@ -1,4 +1,5 @@
 use std::cmp;
+use std::collections::HashSet;
 use std::env;
 use std::fs;
 use std::iter::{Iterator, Rev};
@@ -570,11 +571,9 @@ fn day7part2(input: &str) -> String {
         for i in -ni..=ni {
             let cell = mid.strict_add_signed(i);
             if line[cell] == '^' {
-                println!("junction at n={} cell={}", n, cell);
                 current[cell-1] += prev[cell];
                 current[cell+1] += prev[cell];
             } else {
-                println!("no junction at n={} cell={}", n, cell);
                 current[cell] += prev[cell]
             }
         }
@@ -584,6 +583,230 @@ fn day7part2(input: &str) -> String {
     }
 
     format!("D07P2: {}", prev.iter().sum::<u64>())
+}
+
+struct D8Box {
+    x: u32,
+    y: u32,
+    z: u32,
+    circuit: Option<usize>,
+}
+
+// converts the two u32 args to f64,
+// then sums them and squares the result
+// i am very tired
+fn d8brain_fried(x: u32, y: u32) -> f64 {
+    let xf = f64::from(x);
+    let yf = f64::from(y);
+    (xf + yf).powf(2.0f64)
+}
+
+impl D8Box {
+    fn new(x: u32, y: u32, z: u32) -> Self {
+        Self { x, y, z, circuit: None }
+    }
+
+    fn distance_to(&self, other: &D8Box) -> f64 {
+        //let xf = f64::from((self.x.abs_diff(other.x)).strict_pow(2));
+        //let yf = f64::from((self.y.abs_diff(other.y)).strict_pow(2));
+        //let zf = f64::from((self.z.abs_diff(other.z)).strict_pow(2));
+        let xf = d8brain_fried(self.x, other.x);
+        let yf = d8brain_fried(self.y, other.y);
+        let zf = d8brain_fried(self.z, other.z);
+        (xf + yf + zf).sqrt()
+    }
+}
+
+fn d8parse_boxes(input: &str) -> Vec<D8Box> {
+    input.lines().map(|line| {
+        let (x_s, back) = line.split_once(',')
+            .expect("couldnt find a comma to split");
+        let (y_s, z_s) = back.split_once(',')
+            .expect("couldnt find a comma to split");
+        let x = parse_the(x_s);
+        let y = parse_the(y_s);
+        let z = parse_the(z_s);
+        D8Box::new(x, y, z)
+    }).collect()
+}
+
+fn d8insert_sorted(
+    item: ((usize, usize), f64),
+    v: &mut Vec<((usize, usize), f64)>,
+)
+{
+    let i = match v.binary_search_by(|t| t.1.partial_cmp(&item.1).unwrap()) {
+        Ok(x)  => x,
+        Err(x) => x,
+    };
+
+    v.insert(i, item);
+}
+
+/*
+target: 5,4,2,2,+7 (13 alloc)
+    (0,19)
+    2,+18 (2 alloc)
+    [0,19]
+
+    (0,7)
+    3,+17 (3 alloc)
+    [0,7,19]
+
+    (2,13)
+    3,2,+15 (5 alloc)
+    [0,7,19]
+    [2,13]
+
+    (7,19 nothing happens)
+
+    (17,18)
+    3,2,2,+13 (7 alloc)
+    [0,7,19]
+    [2,13]
+    [17,18]
+
+    (9,12)
+    3,2,2,2,+11 (9 alloc)
+    [0,7,19]
+    [2,13]
+    [17,18]
+    [9,12]
+
+    (11,16)
+    3,2,2,2,2,+9 (11 alloc)
+    [0,7,19]
+    [2,13]
+    [17,18]
+    [9,12]
+    [11,16]
+
+    (2,8)
+    3,3,2,2,2,+8 (12 alloc)
+    [0,7,19]
+    [2,8,13]
+    [17,18]
+    [9,12]
+    [11,16]
+
+    (14,19)
+    4,3,2,2,2,+7 (13 alloc)
+    [0,7,14,19]
+    [2,8,13]
+    [17,18]
+    [9,12]
+    [11,16]
+*/
+
+fn d8p1circuit_product<T>(circuits: &[HashSet<T>]) -> usize {
+    let mut cs = circuits.iter();
+
+    let mut x = cs.next().unwrap().len();
+    let mut y = cs.next().unwrap().len();
+    let mut z = cs.next().unwrap().len();
+
+    for c in cs {
+        if c.len() > x {
+            z = y;
+            y = x;
+            x = c.len();
+        } else if c.len() > y {
+            z = y;
+            y = c.len();
+        } else if c.len() > z {
+            z = c.len();
+        }
+    }
+    x * y * z
+}
+
+// my computer isn't good enough for this
+// why do i bother
+fn day8part1base(input: &str, is_example: bool) -> String {
+    let mut boxes = d8parse_boxes(input);
+    //let mut conns = HashMap::<(usize, usize), f64>::new();
+    let mut conns = vec![];
+
+    println!("calculating distances");
+    for i in 0..boxes.len()-1 {
+        if i % 1000 == 0 {
+            println!("i={}", i);
+        }
+        for j in i+1..boxes.len() {
+            let d = boxes[i].distance_to(&boxes[j]);
+            d8insert_sorted(((i, j), d), &mut conns);
+        }
+    }
+    
+    let mut circuits: Vec<HashSet<usize>> = vec![];
+    let mut allocated = 0;
+
+    for (n, ((i, j), _f)) in conns.into_iter().enumerate() {
+        //println!("checking {} and {}", i, j);
+        match (boxes[i].circuit, boxes[j].circuit) {
+            (Some(ci), Some(cj)) => {
+                if ci != cj {
+                    let mut c = circuits.remove(cj);
+                    for b in c {
+                        boxes[b].circuit = Some(ci);
+                        circuits[ci].insert(b);
+                    }
+                }
+            }
+            (None, None) => {
+                let mut c = HashSet::new();
+                c.insert(i);
+                c.insert(j);
+                boxes[i].circuit = Some(circuits.len());
+                boxes[j].circuit = Some(circuits.len());
+                circuits.push(c);
+                allocated += 2;
+            }
+            (Some(c), None) => {
+                circuits[c].insert(j);
+                boxes[j].circuit = Some(c);
+                allocated += 1;
+            }
+            (None, Some(c)) => {
+                circuits[c].insert(i);
+                boxes[i].circuit = Some(c);
+                allocated += 1;
+            }
+        }
+        //println!("current circuits: {:?}", circuits);
+
+        // this is one of the worst-written
+        // programming problems i have ever read
+        if is_example && n >= 9 {
+            break;
+        }
+
+        if allocated > boxes.len() {
+            println!("allocated more boxes than therer should be?\nthis is probably a bug, but proceeding as normal");
+            break;
+        }
+
+        if allocated == boxes.len() {
+            break;
+        }
+    }
+
+    let product = d8p1circuit_product(&circuits);
+    //println!("{:?}", circuits);
+    format!("D08P1: {}", product)
+}
+
+fn day8part1example(input: &str) -> String {
+    day8part1base(input, true)
+}
+
+// the real one
+fn day8part1(input: &str) -> String {
+    day8part1base(input, false)
+}
+
+fn day8part2(input: &str) -> String {
+    format!("D08P2: TODO")
 }
 
 fn get_whole_file(path: &str) -> String {
@@ -622,6 +845,8 @@ fn lookup_solution(name: String) -> Option<(fn(&str) -> String, &'static str)> {
         "D06P2" => Some((day6part2, "day06_input.txt")),
         "D07P1" => Some((day7part1, "day07_input.txt")),
         "D07P2" => Some((day7part2, "day07_input.txt")),
+        "D08P1" => Some((day8part1, "day08_input.txt")),
+        "D08P2" => Some((day8part2, "day08_input.txt")),
         _ => None,
     }
 }
@@ -658,6 +883,8 @@ mod tests {
     const D6_TEST_INPUT: &'static str = "123 328  51 64 \n 45 64  387 23 \n  6 98  215 314\n*   +   *   +  ";
 
     const D7_TEST_INPUT: &'static str = ".......S.......\n...............\n.......^.......\n...............\n......^.^......\n...............\n.....^.^.^.....\n...............\n....^.^...^....\n...............\n...^.^...^.^...\n...............\n..^...^.....^..\n...............\n.^.^.^.^.^...^.\n...............";
+
+    const D8_TEST_INPUT: &'static str = "162,817,812\n57,618,57\n906,360,560\n592,479,940\n352,342,300\n466,668,158\n542,29,236\n431,825,988\n739,650,466\n52,470,668\n216,146,977\n819,987,18\n117,168,530\n805,96,715\n346,949,466\n970,615,88\n941,993,340\n862,61,35\n984,92,344\n425,690,689";
 
     #[test]
     fn test_d1p1() {
@@ -729,4 +956,13 @@ mod tests {
         assert_eq!("D07P2: 40".to_owned(), day7part2(D7_TEST_INPUT));
     }
 
+    #[test]
+    fn test_d8p1() {
+        assert_eq!("D08P1: 40".to_owned(), day8part1example(D8_TEST_INPUT));
+    }
+
+    #[test]
+    fn test_d8p2() {
+        assert_eq!("D08P2: TODO".to_owned(), day8part2(D8_TEST_INPUT));
+    }
 }
