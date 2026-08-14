@@ -1,3 +1,5 @@
 **/spoilers.md
 **/*input.txt
 /Rust/*/target
+/Zig/zig-out/
+/Zig/.zig-cache/
