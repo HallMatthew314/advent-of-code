@@ -91,9 +91,5 @@ pub fn main(init: Init) !void {
     if (Settings.parse(init.minimal.args)) |settings| {
         // TODO: read input file contents to give to problem function
         try settings.problem(arena, "garbage");
-    } else |err| switch (err) {
-        // please just let me catch into a noreturn block with
-        // the errno as an argument, pleeeeease
-        else => try fail(err, stderr, io),
-    }
+    } else |err| try fail(err, stderr, io);
 }
